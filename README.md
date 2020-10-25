@@ -11,7 +11,9 @@ devtools::install_github("stud-th/HiveS2")
 # Loading JDBC HiveDriver and connection:
 cp=c("/Users/zukow/spark-2.2.1-bin-hadoop2.7/jars/hive-jdbc-1.2.1.spark2-standalone.jar","/Users/zukow/spark-2.2.1-bin-hadoop2.7/jars/commons-configuration-1.6.jar","/Users/zukow/spark-2.2.1-bin-hadoop2.7/jars/hadoop-common-2.7.3.jar")
 .jinit(classpath=cp)
-drv <- HiveS2("org.apache.hive.jdbc.HiveDriver","/Users/zukow/spark-2.2.1-bin-hadoop2.7/jars/hive-jdbc-1.2.1.spark2-standalone.jar",identifier.quote='`')
-conn <- DBI::dbConnect(drv, "jdbc:hive2://localhost:10000/", "", "")
+conn <- DBI::dbConnect(HiveS2("org.apache.hive.jdbc.HiveDriver","/Users/zukow/spark-2.2.1-bin-hadoop2.7/jars/hive-jdbc-1.2.1.spark2.jar", identifier.quote='`'),
+                        url="jdbc:hive2://localhost:10000",
+                        schema = "so_survey_2019_hive"
+)
 ```
 
