@@ -2,10 +2,12 @@
 % Please edit documentation in R/HiveS2Connection.R
 \name{dbListTables,HS2Connection-method}
 \alias{dbListTables,HS2Connection-method}
-\title{TODO: why dbListTables shows character(0)}
+\title{TODO: why dbListTables shows character(0)
+when specifying schema all queries that follow will be executed on that schema (warning message)}
 \usage{
 \S4method{dbListTables}{HS2Connection}(conn, pattern = "\%", schema = NULL, ...)
 }
 \description{
 TODO: why dbListTables shows character(0)
+when specifying schema all queries that follow will be executed on that schema (warning message)
 }
