@@ -2,7 +2,7 @@
 #' TODO: why dbListTables shows character(0)
 #' when specifying schema all queries that follow will be executed on that schema (warning message)
 #' @export
-setMethod("dbListTables", "HS2Connection", function(conn, pattern=NULL, schema=NULL, ...) {
+setMethod("dbListTables", "HiveS2Connection", function(conn, pattern=NULL, schema=NULL, ...) {
   if (!is.null(pattern)) {
     statement <- paste('SHOW TABLES LIKE', dbQuoteString(conn, pattern))
   }

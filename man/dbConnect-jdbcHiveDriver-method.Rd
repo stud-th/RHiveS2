@@ -4,7 +4,7 @@
 \alias{dbConnect,jdbcHiveDriver-method}
 \title{method "dbConnect" copied from RJDBC with JDBCConnection replaced with jdbcHiveDriver}
 \usage{
-\S4method{dbConnect}{jdbcHiveDriver}(drv, url, user = "", password = "", ...)
+\S4method{dbConnect}{jdbcHiveDriver}(drv, url, schema = NULL, user = "", password = "", ...)
 }
 \description{
 method "dbConnect" copied from RJDBC with JDBCConnection replaced with jdbcHiveDriver

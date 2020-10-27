@@ -30,8 +30,8 @@ setMethod("dbConnect", "jdbcHiveDriver",
     print(as.character(paste(url,"/",schema,sep = "")))
   }
   .verify.JDBC.result(jc, "Unable to connect JDBC to ",url)
-  new("HS2Connection", jc=jc, identifier.quote=drv@identifier.quote)},
-  valueClass="HS2Connection")
+  new("HiveS2Connection", jc=jc, identifier.quote=drv@identifier.quote)},
+  valueClass="HiveS2Connection")
 
 #' function HiveS2 copied from RJDBC
 #' create jdbcHiveDriver object
@@ -59,15 +59,15 @@ HiveS2 <- function(driverClass='', classPath='', identifier.quote=NA) {
 }
 
 
-#' HS2Connection class inherits from JDBCConnection (RJDBC)
-#' @rdname HS2Connection-class
+#' HiveS2Connection class inherits from JDBCConnection (RJDBC)
+#' @rdname HiveS2Connection-class
 #' @export
-setClass("HS2Connection",
+setClass("HiveS2Connection",
          contains = "JDBCConnection")
 
 #' method "dbQuoteIdentifier" based on RSQLite
 #' @export
-setMethod("dbQuoteIdentifier", c("HS2Connection", "character"), function(conn, x, ...) {
+setMethod("dbQuoteIdentifier", c("HiveS2Connection", "character"), function(conn, x, ...) {
   if (any(is.na(x))) {
     stop("Cannot pass NA to dbQuoteIdentifier()", call. = FALSE)
   }
@@ -80,7 +80,7 @@ setMethod("dbQuoteIdentifier", c("HS2Connection", "character"), function(conn, x
 })
 
 #' @export
-setMethod("dbQuoteIdentifier", c("HS2Connection", "SQL"), function(conn, x, ...) {
+setMethod("dbQuoteIdentifier", c("HiveS2Connection", "SQL"), function(conn, x, ...) {
   x
 })
 

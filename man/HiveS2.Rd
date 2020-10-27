@@ -2,10 +2,12 @@
 % Please edit documentation in R/HiveS2Connection.R
 \name{HiveS2}
 \alias{HiveS2}
-\title{function HiveS2 copied from RJDBC}
+\title{function HiveS2 copied from RJDBC
+create jdbcHiveDriver object}
 \usage{
 HiveS2(driverClass = "", classPath = "", identifier.quote = NA)
 }
 \description{
 function HiveS2 copied from RJDBC
+create jdbcHiveDriver object
 }
