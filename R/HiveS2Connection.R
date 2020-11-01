@@ -1,13 +1,32 @@
+#' Driver for HiveServer2
+#' @import methods
 #' @import RJDBC
-#'
+#' @keywords internal
 #' @export
 setClass("jdbcHiveDriver",
           contains = "DBIDriver",
          slots = c(identifier.quote="character",
                    jdrv="jobjRef"))
+#' @export
+#' @rdname HiveS2-class
+setMethod("dbUnloadDriver", "jdbcHiveDriver", function(drv, ...) {
+  TRUE
+})
 
+#' HiveS2Connection class connection class.
+#' inherits from JDBCConnection (RJDBC)
+#' @export
+#' @keywords internal
+setClass("HiveS2Connection",
+         contains = "JDBCConnection",
+         slots = list(
+           host_url = "character",
+           schema_name = "character",
+           username = "character"
+         ))
+
+#' @param drv An object created by \code{HiveS2()}
 #' method "dbConnect" copied from RJDBC with JDBCConnection replaced with jdbcHiveDriver
-#'
 #' @export
 setMethod("dbConnect", "jdbcHiveDriver",
   function(
@@ -30,7 +49,11 @@ setMethod("dbConnect", "jdbcHiveDriver",
     print(as.character(paste(url,"/",schema,sep = "")))
   }
   .verify.JDBC.result(jc, "Unable to connect JDBC to ",url)
-  new("HiveS2Connection", jc=jc, identifier.quote=drv@identifier.quote)},
+  new("HiveS2Connection", jc=jc,
+      identifier.quote=drv@identifier.quote,
+      host_url = url,
+      schema_name = schema,
+      username = as.character(user))},
   valueClass="HiveS2Connection")
 
 #' function HiveS2 copied from RJDBC
@@ -58,12 +81,23 @@ HiveS2 <- function(driverClass='', classPath='', identifier.quote=NA) {
   }
 }
 
+#' #' @export
+#' setMethod("dbDataType", "HiveS2Connection", function(conn, obj, ...) {
+#'   switch_type(obj,
+#'               factor = "STRING",
+#'               datetime = "TIMESTAMP",
+#'               date = "DATE",
+#'               binary = "BINARY",
+#'               integer = "INT",
+#'               double = "DOUBLE",
+#'               character = "STRING",
+#'               logical = "BOOLEAN",
+#'               list = "STRING",
+#'               time = ,
+#'               stop("Unsupported type", call. = FALSE)
+#'   )
+#' })
 
-#' HiveS2Connection class inherits from JDBCConnection (RJDBC)
-#' @rdname HiveS2Connection-class
-#' @export
-setClass("HiveS2Connection",
-         contains = "JDBCConnection")
 
 #' method "dbQuoteIdentifier" based on RSQLite
 #' @export
@@ -71,11 +105,11 @@ setMethod("dbQuoteIdentifier", c("HiveS2Connection", "character"), function(conn
   if (any(is.na(x))) {
     stop("Cannot pass NA to dbQuoteIdentifier()", call. = FALSE)
   }
-  x <- gsub("`", "``", enc2utf8(x))
+  x <- gsub(conn@identifier.quote, paste0(conn@identifier.quote,conn@identifier.quote), enc2utf8(x))
   if (length(x) == 0L) {
     SQL(character(), names = names(x))
   } else {
-    SQL(paste("`", x, "`", sep = ""), names = names(x))
+    SQL(paste(conn@identifier.quote, x, conn@identifier.quote, sep = ""), names = names(x))
   }
 })
 

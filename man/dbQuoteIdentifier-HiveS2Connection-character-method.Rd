@@ -2,10 +2,42 @@
 % Please edit documentation in R/HiveS2Connection.R
 \name{dbQuoteIdentifier,HiveS2Connection,character-method}
 \alias{dbQuoteIdentifier,HiveS2Connection,character-method}
-\title{method "dbQuoteIdentifier" based on RSQLite}
+\title{#' @export
+setMethod("dbDataType", "HiveS2Connection", function(conn, obj, ...) {
+  switch_type(obj,
+              factor = "STRING",
+              datetime = "TIMESTAMP",
+              date = "DATE",
+              binary = "BINARY",
+              integer = "INT",
+              double = "DOUBLE",
+              character = "STRING",
+              logical = "BOOLEAN",
+              list = "STRING",
+              time = ,
+              stop("Unsupported type", call. = FALSE)
+  )
+})
+method "dbQuoteIdentifier" based on RSQLite}
 \usage{
 \S4method{dbQuoteIdentifier}{HiveS2Connection,character}(conn, x, ...)
 }
 \description{
+#' @export
+setMethod("dbDataType", "HiveS2Connection", function(conn, obj, ...) {
+  switch_type(obj,
+              factor = "STRING",
+              datetime = "TIMESTAMP",
+              date = "DATE",
+              binary = "BINARY",
+              integer = "INT",
+              double = "DOUBLE",
+              character = "STRING",
+              logical = "BOOLEAN",
+              list = "STRING",
+              time = ,
+              stop("Unsupported type", call. = FALSE)
+  )
+})
 method "dbQuoteIdentifier" based on RSQLite
 }

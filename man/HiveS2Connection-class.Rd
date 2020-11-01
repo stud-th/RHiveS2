@@ -3,7 +3,10 @@
 \docType{class}
 \name{HiveS2Connection-class}
 \alias{HiveS2Connection-class}
-\title{HiveS2Connection class inherits from JDBCConnection (RJDBC)}
+\title{HiveS2Connection class connection class.
+inherits from JDBCConnection (RJDBC)}
 \description{
-HiveS2Connection class inherits from JDBCConnection (RJDBC)
+HiveS2Connection class connection class.
+inherits from JDBCConnection (RJDBC)
 }
+\keyword{internal}
