@@ -55,3 +55,14 @@ valueClass="HiveS2Connection")
       stop(...," (",.jcall(x, "S", "getMessage"),")")
   }
 }
+
+#' jdbcHiveDriver info
+#' @export
+setMethod("dbGetInfo", "jdbcHiveDriver", function(dbObj, ...) {
+  list(
+    name = "jdbcHiveDriver",
+    driver.version = dbObj@jdrv@jclass,
+    identifier.quote = dbObj@identifier.quote
+  )
+})
+

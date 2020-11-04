@@ -65,6 +65,15 @@ setMethod("dbQuoteIdentifier", c("HiveS2Connection", "SQL"), function(conn, x, .
   x
 })
 
-
+#' jdbcHiveS2Connection info
+#' @export
+setMethod("dbGetInfo", "HiveS2Connection", function(dbObj, ...) {
+  list(
+    dbObj,
+    dbname = dbObj@schema_name,
+    username = dbObj@username,
+    host = dbObj@host_url
+  )
+})
 
 
