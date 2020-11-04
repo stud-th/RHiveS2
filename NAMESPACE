@@ -2,6 +2,7 @@
 
 export(HiveS2)
 exportClasses(HiveS2Connection)
+exportClasses(HiveS2Result)
 exportClasses(jdbcHiveDriver)
 exportMethods(dbConnect)
 exportMethods(dbGetInfo)
