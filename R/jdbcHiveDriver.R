@@ -45,16 +45,7 @@ setMethod("dbConnect", "jdbcHiveDriver",
       username = as.character(user))},
 valueClass="HiveS2Connection")
 
-#' .verify.JDBC.result copied from RJDBC
-.verify.JDBC.result <- function (result, ...) {
-  if (is.jnull(result)) {
-    x <- .jgetEx(TRUE)
-    if (is.jnull(x))
-      stop(...)
-    else
-      stop(...," (",.jcall(x, "S", "getMessage"),")")
-  }
-}
+.verify.JDBC.result <- RJDBC:::.verify.JDBC.result
 
 #' jdbcHiveDriver info
 #' @export

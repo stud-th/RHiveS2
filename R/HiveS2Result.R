@@ -3,4 +3,4 @@
 #' @keywords internal
 #' @export
 setClass("HiveS2Result",
-         contains = "DBIResult")
+         contains = "JDBCResult")
