@@ -75,9 +75,16 @@ setMethod("dbGetInfo", "HiveS2Connection", function(dbObj, ...) {
     host = dbObj@host_url
   )
 })
+
+#' TODO: dbGetTables not working
 #' @export
 setMethod("dbGetTables", "HiveS2Connection", function(conn, table="%", schema=conn@schema_name, ...) {
 FALSE
+})
+#' TODO: dbGetFields not working
+#' @export
+setMethod("dbGetFields", "HiveS2Connection", function(conn, table="%", schema=conn@schema_name, ...) {
+  FALSE
 })
 
 .verify.JDBC.result <- RJDBC:::.verify.JDBC.result

@@ -16,3 +16,4 @@ setMethod("dbListTables", "HiveS2Connection", function(conn, pattern=NULL, schem
     character(0)
   }
 })
+
