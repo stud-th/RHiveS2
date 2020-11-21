@@ -1,3 +1,5 @@
+
+#' TODO: why dbListTables shows character(0)
 #' when specifying schema all queries that follow will be executed on that schema (warning message)
 #' @export
 setMethod("dbListTables", "HiveS2Connection", function(conn, pattern=NULL, schema=NULL, ...) {
@@ -16,4 +18,3 @@ setMethod("dbListTables", "HiveS2Connection", function(conn, pattern=NULL, schem
     character(0)
   }
 })
-

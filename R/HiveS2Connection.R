@@ -5,7 +5,8 @@
 setClass("HiveS2Connection",
          contains = "JDBCConnection",
          slots = list(
-           host_url = "character",
+           host = "character",
+           port = "character",
            schema_name = "character",
            username = "character"
          ))
@@ -72,20 +73,18 @@ setMethod("dbGetInfo", "HiveS2Connection", function(dbObj, ...) {
     dbObj,
     dbname = dbObj@schema_name,
     username = dbObj@username,
-    host = dbObj@host_url
+    host = dbObj@host,
+    port = dbObj@port
   )
 })
 
 #' TODO: dbGetTables not working
 #' @export
 setMethod("dbGetTables", "HiveS2Connection", function(conn, table="%", schema=conn@schema_name, ...) {
-FALSE
+  FALSE
 })
 #' TODO: dbGetFields not working
 #' @export
 setMethod("dbGetFields", "HiveS2Connection", function(conn, table="%", schema=conn@schema_name, ...) {
   FALSE
 })
-
-.verify.JDBC.result <- RJDBC:::.verify.JDBC.result
-.fetch.result <- RJDBC:::.fetch.result

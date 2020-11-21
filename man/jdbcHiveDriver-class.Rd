@@ -3,8 +3,15 @@
 \docType{class}
 \name{jdbcHiveDriver-class}
 \alias{jdbcHiveDriver-class}
+\alias{show,jdbcHiveDriver-method}
 \title{Driver for HiveServer2}
+\usage{
+\S4method{show}{jdbcHiveDriver}(object)
+}
 \description{
 Driver for HiveServer2
 }
+\keyword{class.}
+\keyword{driver}
 \keyword{internal}
+\keyword{jdbcHiveDriver}

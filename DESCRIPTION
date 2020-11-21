@@ -16,3 +16,9 @@ Suggests:
 Imports:
     DBI,
     methods
+Collate: 
+    'jdbcHiveDriver.R'
+    'HS2Connector.R'
+    'HiveS2Connection.R'
+    'HiveS2Result.R'
+    'dbListTables.R'
