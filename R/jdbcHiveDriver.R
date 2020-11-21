@@ -25,10 +25,3 @@ setMethod("dbGetInfo", "jdbcHiveDriver", function(dbObj, ...) {
     identifier.quote = dbObj@identifier.quote
   )
 })
-
-#' @rdname jdbcHiveDriver-class
-#' @export
-setMethod('show', 'jdbcHiveDriver', function(object) {
-            cat('<jdbcHiveDriver>\n')
-          })
-
