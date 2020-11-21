@@ -14,7 +14,7 @@ setClass("HiveS2Connection",
 setMethod("dbDisconnect", "HiveS2Connection", getMethod("dbDisconnect", "JDBCConnection"))
 
 #' function HiveS2 copied from RJDBC
-#' create jdbcHiveDriver object
+#' create jdbcHiveDriver dbObj
 #' @export
 HiveS2 <- function(driverClass='', classPath='', identifier.quote=NA) {
   classPath <- path.expand(unlist(strsplit(classPath, .Platform$path.sep)))
@@ -69,14 +69,27 @@ setMethod("dbQuoteIdentifier", c("HiveS2Connection", "SQL"), function(conn, x, .
 #' jdbcHiveS2Connection info
 #' @export
 setMethod("dbGetInfo", "HiveS2Connection", function(dbObj, ...) {
-  list(
-    dbObj,
-    dbname = dbObj@schema_name,
-    username = dbObj@username,
-    host = dbObj@host,
-    port = dbObj@port
-  )
+            list(
+              dbObj,
+              dbname = dbObj@schema_name,
+              username = dbObj@username,
+              host = dbObj@host,
+              port = dbObj@port
+            )
 })
+
+#' @rdname HiveS2Connection-class
+#' @export
+setMethod("show",  "HiveS2Connection",  function(dbObj,...) {
+            cat(
+              "<HiveS2Connection: ", dbObj@host, ":", dbObj@port, ">\n",
+              "Schema: ", dbObj@schema_name, "\n",
+              "User: ", dbObj@username, "\n",
+              "Source: ", dbObj@source, "\n",
+              sep=""
+            )
+            parameters <- dbObj@session$parameters()
+          })
 
 #' TODO: dbGetTables not working
 #' @export
