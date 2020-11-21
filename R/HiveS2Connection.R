@@ -78,17 +78,15 @@ setMethod("dbGetInfo", "HiveS2Connection", function(dbObj, ...) {
             )
 })
 
-#' @rdname HiveS2Connection-class
-#' @export
-setMethod("show",  "HiveS2Connection",  function(dbObj,...) {
+#' #' @rdname HiveS2Connection-class
+#' #' @export
+setMethod("show",  "HiveS2Connection",  function(object) {
             cat(
-              "<HiveS2Connection: ", dbObj@host, ":", dbObj@port, ">\n",
-              "Schema: ", dbObj@schema_name, "\n",
-              "User: ", dbObj@username, "\n",
-              "Source: ", dbObj@source, "\n",
+              "<HiveS2Connection: ", object@host, ":", object@port, ">\n",
+              "Schema: ", object@schema_name, "\n",
+              "User: ", object@username, "\n",
               sep=""
             )
-            parameters <- dbObj@session$parameters()
           })
 
 #' TODO: dbGetTables not working
