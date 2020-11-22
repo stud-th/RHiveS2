@@ -3,11 +3,11 @@
 \name{HiveS2}
 \alias{HiveS2}
 \title{function HiveS2 copied from RJDBC
-create jdbcHiveDriver object}
+create jdbcHiveDriver dbObj}
 \usage{
 HiveS2(driverClass = "", classPath = "", identifier.quote = NA)
 }
 \description{
 function HiveS2 copied from RJDBC
-create jdbcHiveDriver object
+create jdbcHiveDriver dbObj
 }

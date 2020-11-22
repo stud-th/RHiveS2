@@ -1,4 +1,4 @@
-#' @include HiveS2Connection
+#' @include HiveS2Connection.R
 #' @export
 setMethod("dbDataType", "HiveS2Connection", function(dbObj, obj) {
   data_type(obj)

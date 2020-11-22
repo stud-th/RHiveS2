@@ -21,4 +21,5 @@ Collate:
     'HS2Connector.R'
     'HiveS2Connection.R'
     'HiveS2Result.R'
+    'dbDataType.R'
     'dbListTables.R'

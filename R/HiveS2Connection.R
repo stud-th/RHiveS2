@@ -50,25 +50,25 @@ setMethod("dbQuoteIdentifier", c("HiveS2Connection", "SQL"), function(conn, x, .
 #' jdbcHiveS2Connection info
 #' @export
 setMethod("dbGetInfo", "HiveS2Connection", function(dbObj, ...) {
-            list(
-              dbObj,
-              dbname = dbObj@schema_name,
-              username = dbObj@username,
-              host = dbObj@host,
-              port = dbObj@port
-            )
+    list(
+      dbObj,
+      dbname = dbObj@schema_name,
+      username = dbObj@username,
+      host = dbObj@host,
+      port = dbObj@port
+    )
 })
 
 #' #' @rdname HiveS2Connection-class
 #' #' @export
 setMethod("show",  "HiveS2Connection",  function(object) {
-            cat(
-              "<HiveS2Connection: ", object@host, ":", object@port, ">\n",
-              "Schema: ", object@schema_name, "\n",
-              "User: ", object@username, "\n",
-              sep=""
-            )
-          })
+  cat(
+    "<HiveS2Connection: ", object@host, ":", object@port, ">\n",
+    "Schema: ", object@schema_name, "\n",
+    "User: ", object@username, "\n",
+    sep=""
+  )
+})
 
 #' TODO: dbGetTables not working
 #' @export
@@ -79,4 +79,10 @@ setMethod("dbGetTables", "HiveS2Connection", function(conn, table="%", schema=co
 #' @export
 setMethod("dbGetFields", "HiveS2Connection", function(conn, table="%", schema=conn@schema_name, ...) {
   FALSE
+})
+
+#' @export
+setMethod("dbDisconnect", "HiveS2Connection", function(conn, ...){
+  .jcall(conn@jc, "V", "close")
+  invisible(TRUE)
 })
