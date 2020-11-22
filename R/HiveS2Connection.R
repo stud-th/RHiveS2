@@ -28,25 +28,6 @@ HiveS2 <- function(driverClass='', classPath='', identifier.quote=NA) {
   new("jdbcHiveDriver", identifier.quote=as.character(identifier.quote), jdrv=jdrv)
 }
 
-
-#' #' @export
-#' setMethod("dbDataType", "HiveS2Connection", function(conn, obj, ...) {
-#'   switch_type(obj,
-#'               factor = "STRING",
-#'               datetime = "TIMESTAMP",
-#'               date = "DATE",
-#'               binary = "BINARY",
-#'               integer = "INT",
-#'               double = "DOUBLE",
-#'               character = "STRING",
-#'               logical = "BOOLEAN",
-#'               list = "STRING",
-#'               time = ,
-#'               stop("Unsupported type", call. = FALSE)
-#'   )
-#' })
-
-
 #' method "dbQuoteIdentifier" based on RSQLite
 #' @export
 setMethod("dbQuoteIdentifier", c("HiveS2Connection", "character"), function(conn, x, ...) {
