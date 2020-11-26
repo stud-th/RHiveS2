@@ -1,10 +1,10 @@
-# HiveS2
+# RHiveS2
 Extension of RJDBC package allowing to connect R to HiveServer2 through JDBC driver.
 
 ## Installation
 ``` r
 # install.packages("devtools")
-devtools::install_github("stud-th/HiveS2")
+devtools::install_github("stud-th/RHiveS2")
 ```
 ## Connection
 ``` r
