@@ -4,3 +4,5 @@
 #' @export
 setClass("HiveS2Result",
          contains = "JDBCResult")
+
+

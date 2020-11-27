@@ -9,7 +9,6 @@ setClass("jdbcHiveDriver",
          slots = c(identifier.quote="character",
                    jdrv="jobjRef"))
 #' @export
-#' @rdname HiveS2-class
 setMethod("dbUnloadDriver", "jdbcHiveDriver", function(drv, ...) {
   FALSE
 })

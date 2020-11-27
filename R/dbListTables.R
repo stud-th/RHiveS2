@@ -1,4 +1,5 @@
 #' when specifying schema all queries that follow will be executed on that schema (warning message)
+#' @include HiveS2Connection.R
 #' @export
 setMethod("dbListTables", "HiveS2Connection", function(conn, pattern=NULL, schema=NULL, ...) {
   if (!is.null(pattern)) {

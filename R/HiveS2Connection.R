@@ -28,9 +28,9 @@ HiveS2 <- function(driverClass='', classPath='', identifier.quote=NA) {
   new("jdbcHiveDriver", identifier.quote=as.character(identifier.quote), jdrv=jdrv)
 }
 
-#' method "dbQuoteIdentifier" based on RSQLite
-#' #' @export
-#' setMethod("dbQuoteIdentifier", c("HiveS2Connection", "character"), function(conn, x, ...) {
+#' #' method "dbQuoteIdentifier" based on RSQLite
+# @export
+#' setMethod("dbQuoteIdentifier", signature("HiveS2Connection", "character"), function(conn, x, ...) {
 #'   if (any(is.na(x))) {
 #'     stop("Cannot pass NA to dbQuoteIdentifier()", call. = FALSE)
 #'   }
@@ -41,11 +41,11 @@ HiveS2 <- function(driverClass='', classPath='', identifier.quote=NA) {
 #'     SQL(paste(conn@identifier.quote, x, conn@identifier.quote, sep = ""), names = names(x))
 #'   }
 #' })
-
-#' @export
-setMethod("dbQuoteIdentifier", c("HiveS2Connection", "SQL"), function(conn, x, ...) {
-  x
-})
+#'
+#' #' @export
+#' setMethod("dbQuoteIdentifier", signature("HiveS2Connection", "SQL"), function(conn, x, ...) {
+#'   x
+#' })
 
 #' jdbcHiveS2Connection info
 #' @export
@@ -59,8 +59,8 @@ setMethod("dbGetInfo", "HiveS2Connection", function(dbObj, ...) {
     )
 })
 
-#' #' @rdname HiveS2Connection-class
-#' #' @export
+
+#' @export
 setMethod("show",  "HiveS2Connection",  function(object) {
   cat(
     "<HiveS2Connection: ", object@host, ":", object@port, ">\n",

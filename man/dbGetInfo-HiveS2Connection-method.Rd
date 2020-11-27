@@ -2,10 +2,25 @@
 % Please edit documentation in R/HiveS2Connection.R
 \name{dbGetInfo,HiveS2Connection-method}
 \alias{dbGetInfo,HiveS2Connection-method}
-\title{jdbcHiveS2Connection info}
+\title{#' method "dbQuoteIdentifier" based on RSQLite
+setMethod("dbQuoteIdentifier", signature("HiveS2Connection", "character"), function(conn, x, ...) {
+  if (any(is.na(x))) {
+    stop("Cannot pass NA to dbQuoteIdentifier()", call. = FALSE)
+  }
+  x <- gsub(conn@identifier.quote, paste0(conn@identifier.quote,conn@identifier.quote), enc2utf8(x))
+  if (length(x) == 0L) {
+    SQL(character(), names = names(x))
+  } else {
+    SQL(paste(conn@identifier.quote, x, conn@identifier.quote, sep = ""), names = names(x))
+  }
+})}
 \usage{
 \S4method{dbGetInfo}{HiveS2Connection}(dbObj, ...)
 }
 \description{
+#' @export
+setMethod("dbQuoteIdentifier", signature("HiveS2Connection", "SQL"), function(conn, x, ...) {
+  x
+})
 jdbcHiveS2Connection info
 }
