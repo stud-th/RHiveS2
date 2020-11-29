@@ -28,24 +28,24 @@ HiveS2 <- function(driverClass='', classPath='', identifier.quote=NA) {
   new("jdbcHiveDriver", identifier.quote=as.character(identifier.quote), jdrv=jdrv)
 }
 
-#' #' method "dbQuoteIdentifier" based on RSQLite
-# @export
-#' setMethod("dbQuoteIdentifier", signature("HiveS2Connection", "character"), function(conn, x, ...) {
-#'   if (any(is.na(x))) {
-#'     stop("Cannot pass NA to dbQuoteIdentifier()", call. = FALSE)
-#'   }
-#'   x <- gsub(conn@identifier.quote, paste0(conn@identifier.quote,conn@identifier.quote), enc2utf8(x))
-#'   if (length(x) == 0L) {
-#'     SQL(character(), names = names(x))
-#'   } else {
-#'     SQL(paste(conn@identifier.quote, x, conn@identifier.quote, sep = ""), names = names(x))
-#'   }
-#' })
-#'
-#' #' @export
-#' setMethod("dbQuoteIdentifier", signature("HiveS2Connection", "SQL"), function(conn, x, ...) {
-#'   x
-#' })
+#' method "dbQuoteIdentifier" based on RSQLite
+#' @export
+setMethod("dbQuoteIdentifier", signature("HiveS2Connection", "character"), function(conn, x, ...) {
+  if (any(is.na(x))) {
+    stop("Cannot pass NA to dbQuoteIdentifier()", call. = FALSE)
+  }
+  x <- gsub(conn@identifier.quote, paste0(conn@identifier.quote,conn@identifier.quote), enc2utf8(x))
+  if (length(x) == 0L) {
+    SQL(character(), names = names(x))
+  } else {
+    SQL(paste(conn@identifier.quote, x, conn@identifier.quote, sep = ""), names = names(x))
+  }
+})
+
+#' @export
+setMethod("dbQuoteIdentifier", signature("HiveS2Connection", "SQL"), function(conn, x, ...) {
+  x
+})
 
 #' jdbcHiveS2Connection info
 #' @export
