@@ -6,7 +6,7 @@ Author: Agnieszka Zukowska
 Maintainer: Agnieszka Zukowska <zuk.ness@gmail.com>
 Description: More about what it does (maybe more than one line)
     Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.1
@@ -16,7 +16,8 @@ Suggests:
 Imports:
     RJDBC,
     DBI,
-    methods
+    methods,
+    rJava
 Collate: 
     'jdbcHiveDriver.R'
     'HS2Connector.R'
@@ -24,3 +25,4 @@ Collate:
     'HiveS2Result.R'
     'dbDataType.R'
     'dbListTables.R'
+

@@ -1,5 +1,8 @@
 #' HiveS2Connection class connection class.
 #' inherits from JDBCConnection (RJDBC)
+#' @import rJava DBI
+#'
+#'
 #' @export
 #' @keywords internal
 setClass("HiveS2Connection",
@@ -11,15 +14,14 @@ setClass("HiveS2Connection",
            username = "character"
          ))
 
-setMethod("dbDisconnect", "HiveS2Connection", getMethod("dbDisconnect", "JDBCConnection"))
-
 #' function HiveS2 copied from RJDBC
 #' create jdbcHiveDriver dbObj
 #' @export
+#' @rdname HiveS2Connection-class
 HiveS2 <- function(driverClass='', classPath='', identifier.quote=NA) {
   classPath <- path.expand(unlist(strsplit(classPath, .Platform$path.sep)))
   .jinit(classPath) ## this is benign in that it's equivalent to .jaddClassPath if a JVM is running
-  .jaddClassPath(system.file("java", "RJDBC.jar", package="RJDBC"))
+  .jaddClassPath(system.file("java", "RJDBC.jar", package="RHiveS2"))
   if (nchar(driverClass) && is.jnull(.jfindClass(as.character(driverClass)[1])))
     stop("Cannot find jdbc.HiveDriver driver class ",driverClass)
   jdrv <- .jnew(driverClass, check=FALSE)
@@ -28,9 +30,10 @@ HiveS2 <- function(driverClass='', classPath='', identifier.quote=NA) {
   new("jdbcHiveDriver", identifier.quote=as.character(identifier.quote), jdrv=jdrv)
 }
 
-#' method "dbQuoteIdentifier" based on RSQLite
+
 #' @export
-setMethod("dbQuoteIdentifier", signature("HiveS2Connection", "character"), function(conn, x, ...) {
+#' @rdname HiveS2Connection-class
+setMethod("dbQuoteIdentifier", c("HiveS2Connection", "character"), function(conn, x, ...) {
   if (any(is.na(x))) {
     stop("Cannot pass NA to dbQuoteIdentifier()", call. = FALSE)
   }
@@ -42,13 +45,16 @@ setMethod("dbQuoteIdentifier", signature("HiveS2Connection", "character"), funct
   }
 })
 
+
 #' @export
+#' @rdname HiveS2Connection-class
 setMethod("dbQuoteIdentifier", signature("HiveS2Connection", "SQL"), function(conn, x, ...) {
   x
 })
 
 #' jdbcHiveS2Connection info
 #' @export
+#' @rdname HiveS2Connection-class
 setMethod("dbGetInfo", "HiveS2Connection", function(dbObj, ...) {
     list(
       dbObj,
@@ -61,6 +67,7 @@ setMethod("dbGetInfo", "HiveS2Connection", function(dbObj, ...) {
 
 
 #' @export
+#' @rdname HiveS2Connection-class
 setMethod("show",  "HiveS2Connection",  function(object) {
   cat(
     "<HiveS2Connection: ", object@host, ":", object@port, ">\n",
@@ -82,6 +89,7 @@ setMethod("dbGetFields", "HiveS2Connection", function(conn, table="%", schema=co
 })
 
 #' @export
+#' @rdname HiveS2Connection-class
 setMethod("dbDisconnect", "HiveS2Connection", function(conn, ...){
   .jcall(conn@jc, "V", "close")
   invisible(TRUE)

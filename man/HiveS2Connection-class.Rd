@@ -3,10 +3,34 @@
 \docType{class}
 \name{HiveS2Connection-class}
 \alias{HiveS2Connection-class}
+\alias{HiveS2}
+\alias{dbQuoteIdentifier,HiveS2Connection,character-method}
+\alias{dbQuoteIdentifier,HiveS2Connection,SQL-method}
+\alias{dbGetInfo,HiveS2Connection-method}
+\alias{show,HiveS2Connection-method}
+\alias{dbDisconnect,HiveS2Connection-method}
 \title{HiveS2Connection class connection class.
 inherits from JDBCConnection (RJDBC)}
+\usage{
+HiveS2(driverClass = "", classPath = "", identifier.quote = NA)
+
+\S4method{dbQuoteIdentifier}{HiveS2Connection,character}(conn, x, ...)
+
+\S4method{dbQuoteIdentifier}{HiveS2Connection,SQL}(conn, x, ...)
+
+\S4method{dbGetInfo}{HiveS2Connection}(dbObj, ...)
+
+\S4method{show}{HiveS2Connection}(object)
+
+\S4method{dbDisconnect}{HiveS2Connection}(conn, ...)
+}
 \description{
 HiveS2Connection class connection class.
 inherits from JDBCConnection (RJDBC)
+
+function HiveS2 copied from RJDBC
+create jdbcHiveDriver dbObj
+
+jdbcHiveS2Connection info
 }
 \keyword{internal}
