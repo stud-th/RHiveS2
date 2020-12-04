@@ -21,7 +21,7 @@ setClass("HiveS2Connection",
 HiveS2 <- function(driverClass='', classPath='', identifier.quote=NA) {
   classPath <- path.expand(unlist(strsplit(classPath, .Platform$path.sep)))
   .jinit(classPath) ## this is benign in that it's equivalent to .jaddClassPath if a JVM is running
-  .jaddClassPath(system.file("java", "RJDBC.jar", package="RHiveS2"))
+  .jaddClassPath(system.file("java", "RJDBC.jar", package="RJDBC"))
   if (nchar(driverClass) && is.jnull(.jfindClass(as.character(driverClass)[1])))
     stop("Cannot find jdbc.HiveDriver driver class ",driverClass)
   jdrv <- .jnew(driverClass, check=FALSE)
