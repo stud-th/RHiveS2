@@ -2,5 +2,6 @@ library(testthat)
 library(RJDBC)
 library(DBI)
 library(RHiveS2)
-
+library(dplyr)
+library(dplyr)
 test_check("RHiveS2")

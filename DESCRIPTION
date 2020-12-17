@@ -17,7 +17,9 @@ Imports:
     RJDBC,
     DBI,
     methods,
-    rJava
+    rJava,
+    dplyr,
+    dbplyr
 Collate: 
     'jdbcHiveDriver.R'
     'HS2Connector.R'
