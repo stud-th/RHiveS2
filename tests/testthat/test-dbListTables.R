@@ -14,7 +14,8 @@ test_that('dbListTables returns character(0) when no match found', {
 })
 
 test_that('dbListTables returns list of tables', {
-  expect_gt(length(dbListTables(conn, schema = "so_survey_2019_hive")), 0)
+  expect_warning(x<-length(dbListTables(conn, schema = "so_survey_2019_hive")))
+  expect_gt(x, 0)
 })
 
 dbDisconnect(conn)
