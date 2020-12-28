@@ -27,4 +27,5 @@ Collate:
     'HiveS2Result.R'
     'dbDataType.R'
     'dbListTables.R'
-
+    'dbi_transactions.R'
+    'sanbox-2.R'
