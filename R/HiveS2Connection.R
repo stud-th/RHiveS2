@@ -1,7 +1,6 @@
 #' HiveS2Connection class connection class.
 #' inherits from JDBCConnection (RJDBC)
-#' @import rJava DBI
-#'
+#' @import rJava  dplyr DBI
 #'
 #' @export
 #' @keywords internal
@@ -93,4 +92,10 @@ setMethod("dbGetFields", "HiveS2Connection", function(conn, table="%", schema=co
 setMethod("dbDisconnect", "HiveS2Connection", function(conn, ...){
   .jcall(conn@jc, "V", "close")
   invisible(TRUE)
+})
+
+#' @export
+#' @rdname HiveS2Connection-class
+setMethod("dbWriteTable", "JDBCConnection", def=function(conn, name, value, ...) {
+  stop("dbWriteTable not implemented.")
 })
