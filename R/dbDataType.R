@@ -1,7 +1,7 @@
 #' @include HiveS2Connection.R
 #' @export
 setMethod("dbDataType", "HiveS2Connection", function(dbObj, obj) {
-  data_type(obj)
+  data_type(dbObj, obj)
 })
 
 data_type <- function(dbObj,x) {
