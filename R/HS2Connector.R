@@ -24,7 +24,7 @@ setMethod("dbConnect", "jdbcHiveDriver",
               jc <- .jcall(drv@jdrv, "Ljava/sql/Connection;", "connect", as.character(as.character(paste(host,port,"/",schema,sep = "")))[1], p, check=FALSE)
               print(as.character(paste(host,port,"/",schema,sep = "")))
             }
-            .verify.JDBC.result(jc, "Unable to connect JDBC to ",paste(host,port,"/",schema,sep = ""))
+            .verify.JDBC.result(jc, "Unable to connect to the client")
             new("HiveS2Connection", jc=jc,
                 identifier.quote=drv@identifier.quote,
                 host = host,
