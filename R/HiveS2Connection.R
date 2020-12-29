@@ -96,6 +96,7 @@ setMethod("dbDisconnect", "HiveS2Connection", function(conn, ...){
 
 #' @export
 #' @rdname HiveS2Connection-class
-setMethod("dbWriteTable", "JDBCConnection", def=function(conn, name, value, ...) {
+setMethod("dbWriteTable", "HiveS2Connection", def=function(conn, name, value, ...) {
   stop("dbWriteTable not implemented.")
 })
+
