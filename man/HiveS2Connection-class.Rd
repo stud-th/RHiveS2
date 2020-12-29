@@ -9,7 +9,6 @@
 \alias{dbGetInfo,HiveS2Connection-method}
 \alias{show,HiveS2Connection-method}
 \alias{dbDisconnect,HiveS2Connection-method}
-\alias{dbWriteTable,JDBCConnection,ANY-method}
 \title{HiveS2Connection class connection class.
 inherits from JDBCConnection (RJDBC)}
 \usage{
@@ -24,8 +23,6 @@ HiveS2(driverClass = "", classPath = "", identifier.quote = NA)
 \S4method{show}{HiveS2Connection}(object)
 
 \S4method{dbDisconnect}{HiveS2Connection}(conn, ...)
-
-\S4method{dbWriteTable}{JDBCConnection,ANY}(conn, name, value, ...)
 }
 \description{
 HiveS2Connection class connection class.
