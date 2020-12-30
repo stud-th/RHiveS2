@@ -1,6 +1,10 @@
 library(dplyr)
 library(dbplyr)
 library(testthat)
+library(rlang)
+source('utilities.R')
+conn <- HiveS2_TestConnection()
+
 test_that("basic arithmetic is correct", {
   expect_equal(dbplyr::translate_sql(1 + 2), sql("1.0 + 2.0"))
   expect_equal(translate_sql(2 * 4), sql("2.0 * 4.0"))
@@ -53,7 +57,17 @@ test_that("bitwise operations", {
 })
 
 
+test_that("names_to_as() doesn't alias when ident name and value are identical", {
+  x <- ident(name = "name")
+  y <- sql("`name`")
 
-# DDL ---------------------------------------------------------------------
+  expect_equal(names_to_as(y, names2(x),  conn),  "`name`")
+})
 
+test_that("names_to_as() doesn't alias when ident name is missing", {
+  x <- ident("*")
+  y <- sql("`*`")
+
+  expect_equal(names_to_as(y, names2(x), conn),  "`*`")
+})
 
