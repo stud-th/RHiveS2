@@ -11,3 +11,12 @@ HiveS2_TestConnection <- function(){
   )
 
 }
+names_to_as <- function(x, names = names2(x), con = NULL) {
+  if (length(x) == 0) {
+    return(character())
+  }
+  names_esc <- sql_escape_ident(con, names)
+  as <- ifelse(names == "" | names_esc == x, "", paste0(" AS ", names_esc))
+
+  paste0(x, as)
+}
