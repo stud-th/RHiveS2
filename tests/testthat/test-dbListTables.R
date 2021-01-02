@@ -13,6 +13,12 @@ test_that('dbListTables returns character(0) when no match found', {
     character(0)
   )
 })
+test_that('dbListTables returns character(0) when no match found', {
+  expect_equal(
+    dbListTables(conn, pattern='*oo'),
+    "foo"
+  )
+})
 dbSendQuery(conn, "drop table foo")
 
 test_that('dbListTables returns list of tables', {
