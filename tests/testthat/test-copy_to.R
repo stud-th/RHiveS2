@@ -1,8 +1,3 @@
-library(dplyr)
-library(dbplyr)
-library(testthat)
-library(RHiveS2)
-library(RJDBC)
 source('/Users/zukow/Documents/GitHub/RHiveS2/tests/testthat/utilities.R')
 
 test_that("dbWriteTable not implemented yet", {

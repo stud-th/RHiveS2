@@ -1,12 +1,8 @@
-library(dplyr)
-library(dbplyr)
-library(testthat)
-library(rlang)
 # Identifiers ------------------------------------------------------------------
 source('utilities.R')
 
 conn <- HiveS2_TestConnection()
-ei <- function(...) unclass(escape(ident(c(...)), con = conn))
+ei <- function(...) unclass(dbplyr::escape(ident(c(...)), con = conn))
 
 test_that("identifiers get identifier quoting", {
   expect_equal(ei("x"), '`x`')
@@ -24,17 +20,17 @@ test_that("identifier names become AS", {
 
 test_that("zero length inputs yield zero length output when not collapsed", {
   con <- conn
-  expect_equal(sql_vector(sql(), collapse = NULL, con = con), sql())
-  expect_equal(sql_vector(ident(), collapse = NULL, con = con), sql())
+  expect_equal(dbplyr::sql_vector(sql(), collapse = NULL, con = con), sql())
+  expect_equal(dbplyr::sql_vector(ident(), collapse = NULL, con = con), sql())
 })
 
 test_that("zero length inputs yield length-1 output when collapsed", {
   con <- conn
 
-  expect_equal(sql_vector(sql(), parens = FALSE, collapse = "", con = con), sql(""))
-  expect_equal(sql_vector(sql(), parens = TRUE, collapse = "", con = con), sql("()"))
-  expect_equal(sql_vector(ident(), parens = FALSE, collapse = "", con = con), sql(""))
-  expect_equal(sql_vector(ident(), parens = TRUE, collapse = "", con = con), sql("()"))
+  expect_equal(dbplyr::sql_vector(sql(), parens = FALSE, collapse = "", con = con), sql(""))
+  expect_equal(dbplyr::sql_vector(sql(), parens = TRUE, collapse = "", con = con), sql("()"))
+  expect_equal(dbplyr::sql_vector(ident(), parens = FALSE, collapse = "", con = con), sql(""))
+  expect_equal(dbplyr::sql_vector(ident(), parens = TRUE, collapse = "", con = con), sql("()"))
 })
 
 # Numeric ------------------------------------------------------------------
@@ -42,28 +38,28 @@ test_that("zero length inputs yield length-1 output when collapsed", {
 test_that("missing vaues become null", {
   con <- conn
 
-  expect_equal(escape(NA, con = con), sql("NULL"))
-  expect_equal(escape(NA_real_, con = con), sql("NULL"))
-  expect_equal(escape(NA_integer_, con = con), sql("NULL"))
-  expect_equal(escape(NA_character_, con = con), sql("NULL"))
+  expect_equal(dbplyr::escape(NA, con = con), sql("NULL"))
+  expect_equal(dbplyr::escape(NA_real_, con = con), sql("NULL"))
+  expect_equal(dbplyr::escape(NA_integer_, con = con), sql("NULL"))
+  expect_equal(dbplyr::escape(NA_character_, con = con), sql("NULL"))
 })
 
 test_that("-Inf and Inf are expanded and quoted", {
   con <- conn
-  expect_equal(escape(Inf, con = con), sql("'Infinity'"))
-  expect_equal(escape(-Inf, con = con), sql("'-Infinity'"))
+  expect_equal(dbplyr::escape(Inf, con = con), sql("'Infinity'"))
+  expect_equal(dbplyr::escape(-Inf, con = con), sql("'-Infinity'"))
 })
 
-test_that("can escape integer64 values", {
+test_that("can dbplyr::escape integer64 values", {
   con <- conn
   skip_if_not_installed("bit64")
 
   expect_equal(
-    escape(bit64::as.integer64(NA), con = con),
+    dbplyr::escape(bit64::as.integer64(NA), con = con),
     sql("NULL")
   )
   expect_equal(
-    escape(bit64::as.integer64("123456789123456789"), con = con),
+    dbplyr::escape(bit64::as.integer64("123456789123456789"), con = con),
     sql("123456789123456789")
   )
 })
@@ -72,9 +68,9 @@ test_that("can escape integer64 values", {
 
 test_that("logical is SQL-99 compatible (by default)", {
   con <- conn
-  expect_equal(escape(TRUE, con = con), sql("TRUE"))
-  expect_equal(escape(FALSE, con = con), sql("FALSE"))
-  expect_equal(escape(NA, con = con), sql("NULL"))
+  expect_equal(dbplyr::escape(TRUE, con = con), sql("TRUE"))
+  expect_equal(dbplyr::escape(FALSE, con = con), sql("FALSE"))
+  expect_equal(dbplyr::escape(NA, con = con), sql("NULL"))
 })
 
 # Date-time ---------------------------------------------------------------
@@ -83,17 +79,17 @@ test_that("date and date-times are converted to ISO 8601", {
   con <- conn
   x1 <- ISOdatetime(2000, 1, 2, 3, 4, 5, tz = "US/Central")
   x2 <- as.Date(x1)
-  expect_equal(escape(x1, con = con), sql("'2000-01-02T09:04:05Z'"))
-  expect_equal(escape(x2, con = con), sql("'2000-01-02'"))
+  expect_equal(dbplyr::escape(x1, con = con), sql("'2000-01-02T09:04:05Z'"))
+  expect_equal(dbplyr::escape(x2, con = con), sql("'2000-01-02'"))
 })
 
 # Raw -----------------------------------------------------------------
 
 test_that("raw is SQL-99 compatible (by default)", {
   con <- conn
-  expect_equal(escape(blob::as_blob(raw(0)), con = con), sql("X''"))
-  expect_equal(escape(blob::as_blob(as.raw(c(0x01, 0x02, 0x03))), con = con), sql("X'010203'"))
-  expect_equal(escape(blob::as_blob(as.raw(c(0x00, 0xff))), con = con), sql("X'00ff'"))
+  expect_equal(dbplyr::escape(blob::as_blob(raw(0)), con = con), sql("X''"))
+  expect_equal(dbplyr::escape(blob::as_blob(as.raw(c(0x01, 0x02, 0x03))), con = con), sql("X'010203'"))
+  expect_equal(dbplyr::escape(blob::as_blob(as.raw(c(0x00, 0xff))), con = con), sql("X'00ff'"))
 })
 
 # names_to_as() -----------------------------------------------------------
@@ -102,21 +98,21 @@ test_that("names_to_as() doesn't alias when ident name and value are identical",
   x <- ident(name = "name")
   y <- sql("`name`")
 
-  expect_equal(names_to_as(y, names2(x),  con = conn),  "`name`")
+  expect_equal(names_to_as(y, rlang::names2(x),  con = conn),  "`name`")
 })
 
 test_that("names_to_as() doesn't alias when ident name is missing", {
   x <- ident("*")
   y <- sql("`*`")
 
-  expect_equal(names_to_as(y, names2(x), con = conn),  "`*`")
+  expect_equal(names_to_as(y, rlang::names2(x), con = conn),  "`*`")
 })
 
 test_that("names_to_as() aliases when ident name and value are different", {
   x <- ident(new_name = "name")
   y <- sql(new_name = "`name`")
 
-  expect_equal(names_to_as(y, names2(x),  con = conn),  "`name` AS `new_name`")
+  expect_equal(names_to_as(y, rlang::names2(x),  con = conn),  "`name` AS `new_name`")
 })
 
 test_that("zero length inputs return correct clases", {
@@ -127,6 +123,6 @@ test_that("ident quotes", {
   con <- conn
   x1 <- ident("x")
 
-  expect_equal(escape(x1, con = con), sql('`x`'))
-  expect_equal(as.sql(x1), x1)
+  expect_equal(dbplyr::escape(x1, con = con), sql('`x`'))
+  expect_equal(dbplyr::as.sql(x1), x1)
 })
