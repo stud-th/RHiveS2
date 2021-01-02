@@ -5,11 +5,12 @@ setMethod("dbListTables", "HiveS2Connection", function(conn, pattern=NULL, schem
   if (!is.null(pattern)) {
     statement <- paste('SHOW TABLES LIKE', dbQuoteString(conn, pattern))
   }
+  else statement <- "show tables"
   if(!(is.null(schema))){
     d <- dbGetQuery(conn, paste("use ",schema))
     warning(paste("switched to a  schema: ",schema))
   }
-  d <- dbGetQuery(conn, "show tables")
+  d <- dbGetQuery(conn, statement)
   tnames <- d["tableName"]
   if(length(t(tnames))){
   as.vector(t(tnames))
