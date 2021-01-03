@@ -1,59 +1,55 @@
-library(dplyr)
-library(dbplyr)
-library(testthat)
-library(rlang)
 source('utilities.R')
 conn <- HiveS2_TestConnection()
 
 test_that("basic arithmetic is correct", {
   expect_equal(dbplyr::translate_sql(1 + 2), sql("1.0 + 2.0"))
-  expect_equal(translate_sql(2 * 4), sql("2.0 * 4.0"))
-  expect_equal(translate_sql(5 ^ 2), sql("POWER(5.0, 2.0)"))
-  expect_equal(translate_sql(100L %% 3L), sql("100 % 3"))
+  expect_equal(dbplyr::translate_sql(2 * 4), sql("2.0 * 4.0"))
+  expect_equal(dbplyr::translate_sql(5 ^ 2), sql("POWER(5.0, 2.0)"))
+  expect_equal(dbplyr::translate_sql(100L %% 3L), sql("100 % 3"))
 })
 
 test_that("small numbers aren't converted to 0", {
-  expect_equal(translate_sql(1e-9), sql("1e-09"))
+  expect_equal(dbplyr::translate_sql(1e-9), sql("1e-09"))
 })
 
 test_that("unary minus flips sign of number", {
-  expect_equal(translate_sql(-10L), sql("-10"))
-  expect_equal(translate_sql(x == -10), sql('`x` = -10.0'))
-  expect_equal(translate_sql(x %in% c(-1L, 0L)), sql('`x` IN (-1, 0)'))
+  expect_equal(dbplyr::translate_sql(-10L), sql("-10"))
+  expect_equal(dbplyr::translate_sql(x == -10), sql('`x` = -10.0'))
+  expect_equal(dbplyr::translate_sql(x %in% c(-1L, 0L)), sql('`x` IN (-1, 0)'))
 })
 
 test_that("unary minus wraps non-numeric expressions", {
-  expect_equal(translate_sql(-(1L + 2L)), sql("-(1 + 2)"))
-  expect_equal(translate_sql(-mean(x, na.rm = TRUE), window = FALSE), sql('-AVG(`x`)'))
+  expect_equal(dbplyr::translate_sql(-(1L + 2L)), sql("-(1 + 2)"))
+  expect_equal(dbplyr::translate_sql(-mean(x, na.rm = TRUE), window = FALSE), sql('-AVG(`x`)'))
 })
 
 test_that("binary minus subtracts", {
-  expect_equal(translate_sql(1L - 10L), sql("1 - 10"))
+  expect_equal(dbplyr::translate_sql(1L - 10L), sql("1 - 10"))
 })
 
 test_that("log base comes first", {
-  expect_equal(translate_sql(log(x, 10)), sql('LOG(10.0, `x`)'))
+  expect_equal(dbplyr::translate_sql(log(x, 10)), sql('LOG(10.0, `x`)'))
 })
 
 test_that("log becomes ln", {
-  expect_equal(translate_sql(log(x)), sql('LN(`x`)'))
+  expect_equal(dbplyr::translate_sql(log(x)), sql('LN(`x`)'))
 })
 
 test_that("can translate subsetting", {
-  expect_equal(translate_sql(a$b), sql("`a`.`b`"))
-  expect_equal(translate_sql(a[["b"]]), sql("`a`.`b`"))
+  expect_equal(dbplyr::translate_sql(a$b), sql("`a`.`b`"))
+  expect_equal(dbplyr::translate_sql(a[["b"]]), sql("`a`.`b`"))
 })
 
 
 # binary/bitwise ---------------------------------------------------------------
 
 test_that("bitwise operations", {
-  expect_equal(translate_sql(bitwNot(x)),        sql("~(`x`)"))
-  expect_equal(translate_sql(bitwAnd(x, 128L)),  sql("`x` & 128"))
-  expect_equal(translate_sql(bitwOr(x, 128L)),   sql("`x` | 128"))
-  expect_equal(translate_sql(bitwXor(x, 128L)),  sql("`x` ^ 128"))
-  expect_equal(translate_sql(bitwShiftL(x, 2L)), sql("`x` << 2"))
-  expect_equal(translate_sql(bitwShiftR(x, 2L)), sql("`x` >> 2"))
+  expect_equal(dbplyr::translate_sql(bitwNot(x)),        sql("~(`x`)"))
+  expect_equal(dbplyr::translate_sql(bitwAnd(x, 128L)),  sql("`x` & 128"))
+  expect_equal(dbplyr::translate_sql(bitwOr(x, 128L)),   sql("`x` | 128"))
+  expect_equal(dbplyr::translate_sql(bitwXor(x, 128L)),  sql("`x` ^ 128"))
+  expect_equal(dbplyr::translate_sql(bitwShiftL(x, 2L)), sql("`x` << 2"))
+  expect_equal(dbplyr::translate_sql(bitwShiftR(x, 2L)), sql("`x` >> 2"))
 })
 
 
@@ -61,13 +57,13 @@ test_that("names_to_as() doesn't alias when ident name and value are identical",
   x <- ident(name = "name")
   y <- sql("`name`")
 
-  expect_equal(names_to_as(y, names2(x),  conn),  "`name`")
+  expect_equal(names_to_as(y, rlang::names2(x),  conn),  "`name`")
 })
 
 test_that("names_to_as() doesn't alias when ident name is missing", {
   x <- ident("*")
   y <- sql("`*`")
 
-  expect_equal(names_to_as(y, names2(x), conn),  "`*`")
+  expect_equal(names_to_as(y, rlang::names2(x), conn),  "`*`")
 })
 
