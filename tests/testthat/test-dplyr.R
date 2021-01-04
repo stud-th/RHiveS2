@@ -1,13 +1,11 @@
 library(dplyr)
 source('utilities.R')
+
 conn <- HiveS2_TestConnection()
-
-
 iris_tbl <- tbl(conn, "iris")
 
 
 test_that("the implementation of 'mutate' functions as expected", {
-
 
   expect_equivalent(
     iris %>% mutate(x = Species) %>% tbl_vars() %>% length(),
