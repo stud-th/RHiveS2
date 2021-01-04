@@ -43,6 +43,25 @@ test_that("the implementation of 'filter' functions as expected", {
   )
 })
 
+test_that("'head' uses 'limit' clause", {
+  test_requires("dplyr")
+  test_requires("dbplyr")
+
+  expect_true(
+    grepl(
+      "LIMIT",
+      sql_render(head(iris_tbl))
+    )
+  )
+})
+
+test_that("can compute() over tables", {
+  test_requires("dplyr")
+
+  iris_tbl %>% compute()
+  succeed()
+})
+
 # test_that("if_else works as expected", {
 #   sdf <- copy_to(sc, tibble::tibble(x = c(0.9, NA_real_, 1.1)))
 #
@@ -172,19 +191,6 @@ test_that("the implementation of 'filter' functions as expected", {
 #       dplyr::pull(wm)
 #   )
 # })
-
-test_that("'head' uses 'limit' clause", {
-  test_requires("dplyr")
-  test_requires("dbplyr")
-
-  expect_true(
-    grepl(
-      "LIMIT",
-      sql_render(head(iris_tbl))
-    )
-  )
-})
-
 # test_that("'left_join' does not use 'using' clause", {
 #   test_requires("dplyr")
 #   test_requires("dbplyr")
@@ -216,35 +222,4 @@ test_that("'head' uses 'limit' clause", {
 #     invoke("analyzed") %>%
 #     invoke("toString")
 #   expect_match(query_plan, "B|broadcast")
-# })
-
-test_that("can compute() over tables", {
-  test_requires("dplyr")
-
-  iris_tbl %>% compute()
-  succeed()
-})
-
-# test_that("mutate creates NA_real_ column correctly", {
-#   sdf <- sdf_len(sc, 5L) %>% dplyr::mutate(z = NA_real_, sq = id * id)
-#
-#   expect_equivalent(
-#     sdf %>% collect(),
-#     tibble::tibble(id = seq(5), z = NA_real_, sq = id * id)
-#   )
-# })
-#
-# test_that("transmute creates NA_real_ column correctly", {
-#   sdf <- sdf_len(sc, 5L) %>% dplyr::transmute(z = NA_real_, sq = id * id)
-#
-#   expect_equivalent(
-#     sdf %>% collect(),
-#     tibble::tibble(z = NA_real_, sq = seq(5) * seq(5))
-#   )
-# })
-#
-# test_that("process_tbl_name works as expected", {
-#   expect_equal(sparklyr:::process_tbl_name("a"), "a")
-#   expect_equal(sparklyr:::process_tbl_name("xyz"), "xyz")
-#   expect_equal(sparklyr:::process_tbl_name("x.y"), dbplyr::in_schema("x", "y"))
 # })
