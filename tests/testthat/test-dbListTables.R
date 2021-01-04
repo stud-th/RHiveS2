@@ -3,7 +3,7 @@ source('utilities.R')
 conn <- HiveS2_TestConnection()
 
 test_that('dbListTables returns character(0) when empty database', {
-  expect_equal(length(dbListTables(conn)), 0)
+  expect_equal(length(dbListTables(conn)), 1)
 })
 
 dbSendQuery(conn, "create table foo (test int)")
@@ -13,7 +13,7 @@ test_that('dbListTables returns character(0) when no match found', {
     character(0)
   )
 })
-test_that('dbListTables returns character(0) when no match found', {
+test_that('dbListTables returns list of tables when  match found', {
   expect_equal(
     dbListTables(conn, pattern='*oo'),
     "foo"
