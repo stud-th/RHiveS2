@@ -20,16 +20,3 @@ names_to_as <- function(x, names = names2(x), con = NULL) {
 
   paste0(x, as)
 }
-
-test_requires <- function(...) {
-  suppressPackageStartupMessages({
-    for (pkg in list(...)) {
-      if (!require(pkg, character.only = TRUE, quietly = TRUE)) {
-        fmt <- "test requires '%s' but '%s' is not installed"
-        skip(sprintf(fmt, pkg, pkg))
-      }
-    }
-  })
-
-  invisible(TRUE)
-}
