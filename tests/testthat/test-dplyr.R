@@ -4,11 +4,10 @@ conn <- HiveS2_TestConnection()
 
 
 iris_tbl <- tbl(conn, "iris")
-test_requires("dplyr")
 
 
 test_that("the implementation of 'mutate' functions as expected", {
-  test_requires("dplyr")
+
 
   expect_equivalent(
     iris %>% mutate(x = Species) %>% tbl_vars() %>% length(),
@@ -17,7 +16,6 @@ test_that("the implementation of 'mutate' functions as expected", {
 })
 
 test_that("the implementation of 'filter' functions as expected", {
-  test_requires("dplyr")
 
   expect_equivalent(
     iris_tbl %>%
@@ -44,19 +42,16 @@ test_that("the implementation of 'filter' functions as expected", {
 })
 
 test_that("'head' uses 'limit' clause", {
-  test_requires("dplyr")
-  test_requires("dbplyr")
 
   expect_true(
     grepl(
       "LIMIT",
-      sql_render(head(iris_tbl))
+      dbplyr::sql_render(head(iris_tbl))
     )
   )
 })
 
 test_that("can compute() over tables", {
-  test_requires("dplyr")
 
   iris_tbl %>% compute()
   succeed()
@@ -77,7 +72,6 @@ test_that("can compute() over tables", {
 # })
 #
 # test_that("grepl works as expected", {
-#   test_requires("dplyr")
 #
 #   regexes <- c(
 #     "a|c", ".", "b", "x|z", "", "y", "e", "^", "$", "^$", "[0-9]", "[a-z]", "[b-z]"
@@ -192,20 +186,16 @@ test_that("can compute() over tables", {
 #   )
 # })
 # test_that("'left_join' does not use 'using' clause", {
-#   test_requires("dplyr")
-#   test_requires("dbplyr")
-#
 #   expect_equal(
 #     spark_version(sc) >= "2.0.0" && packageVersion("dplyr") < "0.5.0.90",
 #     grepl(
 #       "USING",
-#       sql_render(left_join(df1_tbl, df2_tbl))
+#       dbplyr::sql_render(left_join(df1_tbl, df2_tbl))
 #     )
 #   )
 # })
 #
 # test_that("the implementation of 'left_join' functions as expected", {
-#   test_requires("dplyr")
 #
 #   expect_equivalent(
 #     left_join(df1, df2) %>% dplyr::arrange(b),
