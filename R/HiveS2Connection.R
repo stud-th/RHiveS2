@@ -126,7 +126,7 @@ setMethod("dbWriteTable", "HiveS2Connection", def=function(conn, name, value, ov
     sql_format <-
       "ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.OpenCSVSerde'
     WITH SERDEPROPERTIES (
-      \"separatorChar\" = \",\",
+      \"separatorChar\" = \";\",
       \"quoteChar\"     = \"\\\"\")
     STORED AS TEXTFILE"
     ct <- paste("CREATE TABLE ",qname," (",fdef,") ",sql_format,sep= '')
