@@ -55,20 +55,16 @@ test_that("can compute() over tables", {
   succeed()
 })
 
-# test_that("if_else works as expected", {
-#   sdf <- copy_to(sc, tibble::tibble(x = c(0.9, NA_real_, 1.1)))
-#
-#   expect_equal(
-#     sdf %>% dplyr::mutate(x = ifelse(x > 1, "good", "bad")) %>% dplyr::pull(x),
-#     c("bad", NA, "good")
-#   )
-#   expect_equal(
-#     sdf %>% dplyr::mutate(x = ifelse(x > 1, "good", "bad", "unknown")) %>%
-#       dplyr::pull(x),
-#     c("bad", "unknown", "good")
-#   )
-# })
-#
+test_that("ifelse as expected", {
+  sdf <- copy_to(conn, tibble::tibble(x = c(0.9, "foo", 1.1)), "df1")
+
+  expect_equal(
+    sdf %>% dplyr::mutate(x = ifelse(x > 1, "positive", "negative")) %>% dplyr::pull(x),
+    c("negative", NA, "positive")
+  )
+  dbSendQuery(conn, "drop table df1")
+})
+
 # test_that("grepl works as expected", {
 #
 #   regexes <- c(
@@ -200,14 +196,4 @@ test_that("can compute() over tables", {
 #     left_join(df1_tbl, df2_tbl) %>% dplyr::arrange(b) %>% collect()
 #   )
 # })
-#
-# test_that("'sdf_broadcast' forces broadcast hash join", {
-#   query_plan <- df1_tbl %>%
-#     sdf_broadcast() %>%
-#     left_join(df2_tbl, by = "b") %>%
-#     spark_dataframe() %>%
-#     invoke("queryExecution") %>%
-#     invoke("analyzed") %>%
-#     invoke("toString")
-#   expect_match(query_plan, "B|broadcast")
-# })
+
