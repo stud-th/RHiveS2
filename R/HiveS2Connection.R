@@ -96,7 +96,77 @@ setMethod("dbDisconnect", "HiveS2Connection", function(conn, ...){
 
 #' @export
 #' @rdname HiveS2Connection-class
-setMethod("dbWriteTable", "HiveS2Connection", def=function(conn, name, value, ...) {
-  stop("dbWriteTable not implemented.")
+setMethod("dbWriteTable", "HiveS2Connection", def=function(conn, name, value, overwrite=FALSE, append=FALSE, force=FALSE, ...) {
+#  ac <- .jcall(conn@jc, "Z", "getAutoCommit")
+  overwrite <- isTRUE(as.logical(overwrite))
+  append <- isTRUE(as.logical(append))
+  if (overwrite && append) stop("overwrite=TRUE and append=TRUE are mutually exclusive")
+  if (is.vector(value) && !is.list(value)) value <- data.frame(x=value)
+  if (length(value)<1) stop("value must have at least one column")
+  if (is.null(names(value))) names(value) <- paste("V",1:length(value),sep='')
+  if (length(value[[1]])>0) {
+    if (!is.data.frame(value)) value <- as.data.frame(value, row.names=1:length(value[[1]]))
+  } else {
+    if (!is.data.frame(value)) value <- as.data.frame(value)
+  }
+  fts <- sapply(value, dbDataType, dbObj=conn)
+  if (isTRUE(as.logical(force))) {
+    if (overwrite) dbRemoveTable(conn, name, silent=TRUE)
+  } else if (dbExistsTable(conn, name)) {
+    if (overwrite) dbRemoveTable(conn, name)
+    else if (!append) stop("Table `",name,"' already exists")
+  } else append <- FALSE ## if the table doesn't exist, append has no meaning
+  fdef <- paste(.sql.qescape(names(value), TRUE, conn@identifier.quote),fts,collapse=',')
+  qname <- .sql.qescape(name, TRUE, conn@identifier.quote)
+  # if (ac) {
+  #   .jcall(conn@jc, "V", "setAutoCommit", FALSE)
+  #   on.exit(.jcall(conn@jc, "V", "setAutoCommit", ac))
+  # }
+  if (!append) {
+    sql_format <-
+      "ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.OpenCSVSerde'
+    WITH SERDEPROPERTIES (
+      \"separatorChar\" = \",\",
+      \"quoteChar\"     = \"\\\"\")
+    STORED AS TEXTFILE"
+    ct <- paste("CREATE TABLE ",qname," (",fdef,") ",sql_format,sep= '')
+    dbSendQuery(conn, ct)
+  }
+  if (nrow(value) == 0)  invisible(TRUE)
+
+  ## Save file to disk, then use LOAD DATA command
+  fn <- normalizePath(tempfile("rsdbi"), winslash = "/", mustWork = FALSE)
+  write.csv2(value, file = fn,row.names = FALSE)
+  on.exit(unlink(fn), add = TRUE)
+
+  sql <- paste0(
+    "LOAD DATA INPATH ", dbQuoteString(conn, fn),
+    "  OVERWRITE INTO TABLE ", dbQuoteIdentifier(conn, name)
+  )
+  dbSendQuery(conn, sql)
+
+  # if (length(value[[1]])) {
+  #   inss <- paste("INSERT INTO ",qname," VALUES(", paste(rep("$",length(value)),collapse=','),")",sep='')
+  #   ## make sure everything is a character other than real/int
+  #   list <- lapply(value, function(o) if (!is.numeric(o)) as.character(o) else o)
+  #   browser()
+  #   dbSendQuery(conn, inss, list=list)
+  # }
+  invisible(TRUE)
 })
 
+.sql.qescape <- function(s, identifier=FALSE, quote="\"") {
+  s <- as.character(s)
+  if (identifier) {
+    vid <- grep("^[A-Za-z]+([A-Za-z0-9_]*)$",s)
+    if (length(s[-vid])) {
+      if (is.na(quote)) stop("The JDBC connection doesn't support quoted identifiers, but table/column name contains characters that must be quoted (",paste(s[-vid],collapse=','),")")
+      s[-vid] <- .sql.qescape(s[-vid], FALSE, quote)
+    }
+    return(s)
+  }
+  if (is.na(quote)) quote <- ''
+  s <- gsub("\\\\","\\\\\\\\",s)
+  if (nchar(quote)) s <- gsub(paste("\\",quote,sep=''),paste("\\\\\\",quote,sep=''),s,perl=TRUE)
+  paste(quote,s,quote,sep='')
+}
