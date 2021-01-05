@@ -3,7 +3,7 @@
 #' @export
 setMethod("dbListTables", "HiveS2Connection", function(conn, pattern=NULL, schema=NULL, ...) {
   if (!is.null(pattern)) {
-    statement <- paste('SHOW TABLES LIKE', dbQuoteString(conn, pattern))
+    statement <- paste('SHOW TABLES LIKE', dbQuoteString(conn, paste(pattern)))
   }
   else statement <- "show tables"
   if(!(is.null(schema))){
