@@ -136,7 +136,7 @@ setMethod("dbWriteTable", "HiveS2Connection", def=function(conn, name, value, ov
 
   ## Save file to disk, then use LOAD DATA command
   fn <- normalizePath(tempfile("rsdbi"), winslash = "/", mustWork = FALSE)
-  write.csv2(value, file = fn,row.names = FALSE)
+  write.table(value, file = fn, sep=";", col.names=FALSE, row.names=FALSE)
   on.exit(unlink(fn), add = TRUE)
 
   sql <- paste0(
