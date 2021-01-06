@@ -67,3 +67,17 @@ test_that("names_to_as() doesn't alias when ident name is missing", {
   expect_equal(names_to_as(y, rlang::names2(x), conn),  "`*`")
 })
 
+test_that("join has compliable syntax", {
+
+  df1_df <- tibble(a = letters[20:22], b = letters[1:3])
+  df2_df <- tibble(b = letters[1:3], c = letters[24:26])
+  df1 <- copy_to(conn, df1_df, "df1")
+  df2 <- copy_to(conn, df2_df, "df2")
+  expect_equivalent(
+        left_join(df2_df, df1_df) %>% dplyr::arrange(b),
+        left_join(df2, df1) %>% dplyr::arrange(b) %>% collect()
+      )
+  dbSendQuery(conn, "drop table df1")
+  dbSendQuery(conn, "drop table df2")
+})
+
