@@ -1,9 +1,19 @@
 library(dplyr)
 source('utilities.R')
 
-conn <- HiveS2_TestConnection()
-iris_tbl <- tbl(conn, "iris")
 
+conn <- HiveS2_TestConnection()
+iris_tbl <- copy_to(conn, iris, "iris",  overwrite = TRUE )
+
+test_that("copy_to overwrites hive table if set to true", {
+  name = "iris"
+  data = iris
+  sc <- HiveS2_TestConnection()
+  iris_tbl <- copy_to(conn, data, name = name,  overwrite = TRUE )
+  succeed()
+})
+
+iris_tbl <- copy_to(conn, iris, "iris",  overwrite = TRUE )
 
 test_that("the implementation of 'mutate' functions as expected", {
 
@@ -13,14 +23,15 @@ test_that("the implementation of 'mutate' functions as expected", {
   )
 })
 
+#test adopted from sparlyr/testthat
 test_that("the implementation of 'filter' functions as expected", {
 
   expect_equivalent(
     iris_tbl %>%
-      filter(sepallength == 5.1) %>%
-      filter(sepalwidth == 3.5) %>%
-      filter(petallength == 1.4) %>%
-      filter(petalwidth == 0.2) %>%
+      filter(sepal.length == 5.1) %>%
+      filter(sepal.width == 3.5) %>%
+      filter(petal.length == 1.4) %>%
+      filter(petal.width == 0.2) %>%
       select(species) %>%
       collect(),
     iris %>%
@@ -39,16 +50,6 @@ test_that("the implementation of 'filter' functions as expected", {
   )
 })
 
-test_that("'head' uses 'limit' clause", {
-
-  expect_true(
-    grepl(
-      "LIMIT",
-      dbplyr::sql_render(head(iris_tbl))
-    )
-  )
-})
-
 test_that("can compute() over tables", {
 
   iris_tbl %>% compute()
@@ -56,13 +57,65 @@ test_that("can compute() over tables", {
 })
 
 test_that("ifelse as expected", {
-  sdf <- copy_to(conn, tibble::tibble(x = c(0.9, "foo", 1.1)), "df1")
+
+  df <- copy_to(conn, tibble::tibble(x = c(0.9, "foo", 1.1)), "df1",  overwrite = TRUE )
 
   expect_equal(
-    sdf %>% dplyr::mutate(x = ifelse(x > 1, "positive", "negative")) %>% dplyr::pull(x),
+    df %>% dplyr::mutate(x = ifelse(x > 1, "positive", "negative")) %>% dplyr::pull(x),
     c("negative", NA, "positive")
   )
-  dbSendQuery(conn, "drop table df1")
+})
+
+#test adapted from dplyr/tests/testthat
+df <- copy_to(conn, data.frame(x = rep(1:3, each = 10), y = rep(1:6, each = 5)), "df3", overwrite = TRUE )
+
+test_that("joins preserve grouping", {
+  g <- group_by(df, x)
+
+  expect_equal(group_vars(inner_join(g, g, by = c("x", "y"))), "x")
+  expect_equal(group_vars(left_join(g, g, by = c("x", "y"))), "x")
+  expect_equal(group_vars(semi_join(g, g, by = c("x", "y"))), "x")
+  expect_equal(group_vars(anti_join(g, g, by = c("x", "y"))), "x")
+})
+
+#test adapted from dbplyr/tests/testthat
+# sql-render --------------------------------------------------------------
+
+test_that("quoting for rendering summarized grouped table", {
+  out <- copy_to(conn, tibble::tibble(x = "a"), "df3", overwrite = TRUE )%>%
+    group_by(x) %>%
+    summarise(n = n())
+  expect_equal(out%>%collect(), tibble::tibble(x = "a", n = 1L))
+})
+
+# sql-build ---------------------------------------------------------------
+
+test_that("summarise generates group_by and select", {
+  out <- copy_to(conn, tibble::tibble(g = 1), "df3", overwrite = TRUE ) %>%
+    group_by(g) %>%
+    summarise(n = n()) %>%
+    dbplyr::sql_build()
+
+  expect_equal(out$group_by, sql('`g`'))
+  expect_equal(out$select, sql('`g`', 'COUNT(*) AS `n`'))
+})
+
+# test_that("summarise peels off a single layer of grouping", {
+#   mf1 <- copy_to(conn, tibble::tibble(x = 1, y = 1, z = 2) %>% group_by(x, y), "df3", overwrite = TRUE )
+#   mf2 <- mf1 %>% summarise(n = n())
+#   expect_equal(group_vars(mf2), "x")
+#
+#   mf3 <- mf2 %>% summarise(n = n())
+#   expect_equal(group_vars(mf3), character())
+# })
+
+test_that("summarise performs partial evaluation", {
+  mf1 <- copy_to(conn, tibble::tibble(x = 1), "df3", overwrite = TRUE )
+
+  val <- 1
+  mf2 <- mf1 %>% summarise(y = x == val) %>% collect()
+
+  expect_equal(mf2$y, "true")
 })
 
 # test_that("grepl works as expected", {
