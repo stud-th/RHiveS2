@@ -28,4 +28,4 @@ Collate:
     'dbDataType.R'
     'dbListTables.R'
     'dbi_transactions.R'
-    'sanbox-2.R'
+    'dbplyr_table_hive.R'
