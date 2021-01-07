@@ -41,15 +41,16 @@ test_that("can translate subsetting", {
 })
 
 
-# binary/bitwise ---------------------------------------------------------------
+# binary/bitwise: imported from dbplyr\tests\tesstthat---------------------------------------------------------------
 
-test_that("bitwise operations", {
-  expect_equal(dbplyr::translate_sql(bitwNot(x)),        sql("~(`x`)"))
-  expect_equal(dbplyr::translate_sql(bitwAnd(x, 128L)),  sql("`x` & 128"))
-  expect_equal(dbplyr::translate_sql(bitwOr(x, 128L)),   sql("`x` | 128"))
-  expect_equal(dbplyr::translate_sql(bitwXor(x, 128L)),  sql("`x` ^ 128"))
-  expect_equal(dbplyr::translate_sql(bitwShiftL(x, 2L)), sql("`x` << 2"))
-  expect_equal(dbplyr::translate_sql(bitwShiftR(x, 2L)), sql("`x` >> 2"))
+
+test_that("custom scalar & string functions translated correctly", {
+
+  expect_equal(dbplyr::translate_sql(con = conn, bitwShiftL(x, 2L)),                sql("SHIFTLEFT(`x`, 2)"))
+  expect_equal(dbplyr::translate_sql(con = conn, bitwShiftR(x, 2L)),                sql("SHIFTRIGHT(`x`, 2)"))
+  expect_equal(dbplyr::translate_sql(con = conn, cot(x)),                           sql("1.0 / TAN(`x`)"))
+  expect_equal(dbplyr::translate_sql(con = conn, str_replace_all(x, "old", "new")), sql("REGEXP_REPLACE(`x`, 'old', 'new')"))
+ # expect_equal(dbplyr::translate_sql(con = conn, median(x)),          sql("PERCENTILE(`x`, 0.5) OVER ()"))
 })
 
 
@@ -71,13 +72,11 @@ test_that("join has compliable syntax", {
 
   df1_df <- tibble(a = letters[20:22], b = letters[1:3])
   df2_df <- tibble(b = letters[1:3], c = letters[24:26])
-  df1 <- copy_to(conn, df1_df, "df1")
-  df2 <- copy_to(conn, df2_df, "df2")
+  df1 <- copy_to(conn, df1_df, "df1",  overwrite = TRUE )
+  df2 <- copy_to(conn, df2_df, "df2",  overwrite = TRUE )
   expect_equivalent(
         left_join(df2_df, df1_df) %>% dplyr::arrange(b),
         left_join(df2, df1) %>% dplyr::arrange(b) %>% collect()
       )
-  dbSendQuery(conn, "drop table df1")
-  dbSendQuery(conn, "drop table df2")
 })
 
