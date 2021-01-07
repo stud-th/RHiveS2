@@ -87,6 +87,9 @@ setMethod("dbGetFields", "HiveS2Connection", function(conn, table="%", schema=co
   FALSE
 })
 
+setMethod("dbRemoveTable", "HiveS2Connection", def=function(conn, name, silent=FALSE, ...)
+  if (silent) tryCatch(dbRemoveTable(conn, name, silent=FALSE), error=function(e) FALSE) else dbSendUpdate(conn, paste("DROP TABLE", name)))
+
 #' @export
 #' @rdname HiveS2Connection-class
 setMethod("dbDisconnect", "HiveS2Connection", function(conn, ...){
@@ -118,10 +121,6 @@ setMethod("dbWriteTable", "HiveS2Connection", def=function(conn, name, value, ov
   } else append <- FALSE ## if the table doesn't exist, append has no meaning
   fdef <- paste(.sql.qescape(names(value), TRUE, conn@identifier.quote),fts,collapse=',')
   qname <- .sql.qescape(name, TRUE, conn@identifier.quote)
-  # if (ac) {
-  #   .jcall(conn@jc, "V", "setAutoCommit", FALSE)
-  #   on.exit(.jcall(conn@jc, "V", "setAutoCommit", ac))
-  # }
   if (!append) {
     sql_format <-
       "ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.OpenCSVSerde'
@@ -133,7 +132,7 @@ setMethod("dbWriteTable", "HiveS2Connection", def=function(conn, name, value, ov
     dbSendQuery(conn, ct)
   }
   if (nrow(value) == 0)  invisible(TRUE)
-
+#fwrite
   ## Save file to disk, then use LOAD DATA command
   fn <- normalizePath(tempfile("rsdbi"), winslash = "/", mustWork = FALSE)
   write.table(value, file = fn, sep=";", col.names=FALSE, row.names=FALSE)
@@ -144,14 +143,6 @@ setMethod("dbWriteTable", "HiveS2Connection", def=function(conn, name, value, ov
     "  OVERWRITE INTO TABLE ", dbQuoteIdentifier(conn, name)
   )
   dbSendQuery(conn, sql)
-
-  # if (length(value[[1]])) {
-  #   inss <- paste("INSERT INTO ",qname," VALUES(", paste(rep("$",length(value)),collapse=','),")",sep='')
-  #   ## make sure everything is a character other than real/int
-  #   list <- lapply(value, function(o) if (!is.numeric(o)) as.character(o) else o)
-  #   browser()
-  #   dbSendQuery(conn, inss, list=list)
-  # }
   invisible(TRUE)
 })
 
