@@ -1,3 +1,4 @@
+#' @include helper-RJDBC.R
 #' HiveS2Connection class connection class.
 #' inherits from JDBCConnection (RJDBC)
 #' @import rJava  dplyr DBI
@@ -17,7 +18,7 @@ setClass("HiveS2Connection",
 #' create jdbcHiveDriver dbObj
 #' @export
 #' @rdname HiveS2Connection-class
-HiveS2 <- function(driverClass='', classPath='', identifier.quote=NA) {
+HiveS2 <- function(driverClass='', classPath='', identifier.quote="`") {
   classPath <- path.expand(unlist(strsplit(classPath, .Platform$path.sep)))
   .jinit(classPath) ## this is benign in that it's equivalent to .jaddClassPath if a JVM is running
   .jaddClassPath(system.file("java", "RJDBC.jar", package="RJDBC"))
@@ -51,7 +52,7 @@ setMethod("dbQuoteIdentifier", signature("HiveS2Connection", "SQL"), function(co
   x
 })
 
-#' jdbcHiveS2Connection info
+
 #' @export
 #' @rdname HiveS2Connection-class
 setMethod("dbGetInfo", "HiveS2Connection", function(dbObj, ...) {
@@ -76,19 +77,6 @@ setMethod("show",  "HiveS2Connection",  function(object) {
   )
 })
 
-#' TODO: dbGetTables not working
-#' @export
-setMethod("dbGetTables", "HiveS2Connection", function(conn, table="%", schema=conn@schema_name, ...) {
-  FALSE
-})
-#' TODO: dbGetFields not working
-#' @export
-setMethod("dbGetFields", "HiveS2Connection", function(conn, table="%", schema=conn@schema_name, ...) {
-  FALSE
-})
-
-setMethod("dbRemoveTable", "HiveS2Connection", def=function(conn, name, silent=FALSE, ...)
-  if (silent) tryCatch(dbRemoveTable(conn, name, silent=FALSE), error=function(e) FALSE) else dbSendUpdate(conn, paste("DROP TABLE", name)))
 
 #' @export
 #' @rdname HiveS2Connection-class
@@ -97,10 +85,13 @@ setMethod("dbDisconnect", "HiveS2Connection", function(conn, ...){
   invisible(TRUE)
 })
 
+#' dbWriteTable writtes table into local temporary dile and than it is laded into Hive with 'LOAD DATA' statment
+#' Sceleton of the fuction adapted from RJDBC packade
+#' @param overwrite allows to specify weather existing table with the same name should be removed
 #' @export
 #' @rdname HiveS2Connection-class
 setMethod("dbWriteTable", "HiveS2Connection", def=function(conn, name, value, overwrite=FALSE, append=FALSE, force=FALSE, ...) {
-#  ac <- .jcall(conn@jc, "Z", "getAutoCommit")
+# getAutoCommit deleated as it's not supported
   overwrite <- isTRUE(as.logical(overwrite))
   append <- isTRUE(as.logical(append))
   if (overwrite && append) stop("overwrite=TRUE and append=TRUE are mutually exclusive")
@@ -132,10 +123,11 @@ setMethod("dbWriteTable", "HiveS2Connection", def=function(conn, name, value, ov
     dbSendQuery(conn, ct)
   }
   if (nrow(value) == 0)  invisible(TRUE)
-#fwrite
+
   ## Save file to disk, then use LOAD DATA command
   fn <- normalizePath(tempfile("rsdbi"), winslash = "/", mustWork = FALSE)
-  write.table(value, file = fn, sep=";", col.names=FALSE, row.names=FALSE)
+  #fwrite used as it is  but much faster that write.csv so more suitable for Big Data
+  data.table::fwrite(value, file = fn, sep=";", col.names=FALSE, row.names=FALSE)
   on.exit(unlink(fn), add = TRUE)
 
   sql <- paste0(
@@ -145,19 +137,3 @@ setMethod("dbWriteTable", "HiveS2Connection", def=function(conn, name, value, ov
   dbSendQuery(conn, sql)
   invisible(TRUE)
 })
-
-.sql.qescape <- function(s, identifier=FALSE, quote="\"") {
-  s <- as.character(s)
-  if (identifier) {
-    vid <- grep("^[A-Za-z]+([A-Za-z0-9_]*)$",s)
-    if (length(s[-vid])) {
-      if (is.na(quote)) stop("The JDBC connection doesn't support quoted identifiers, but table/column name contains characters that must be quoted (",paste(s[-vid],collapse=','),")")
-      s[-vid] <- .sql.qescape(s[-vid], FALSE, quote)
-    }
-    return(s)
-  }
-  if (is.na(quote)) quote <- ''
-  s <- gsub("\\\\","\\\\\\\\",s)
-  if (nchar(quote)) s <- gsub(paste("\\",quote,sep=''),paste("\\\\\\",quote,sep=''),s,perl=TRUE)
-  paste(quote,s,quote,sep='')
-}
