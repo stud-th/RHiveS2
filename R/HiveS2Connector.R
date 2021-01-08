@@ -1,7 +1,12 @@
 #' @import methods
 #' @import RJDBC
-#' @include jdbcHiveDriver.R
+#' @include jdbcHiveDriver.R helper-RJDBC.R
+#'
+#'
+#' dbConnect function adapted from RJDBC creating and setting parameters for HiveS2Connection
+#' @param drv jdbcHiveDriver object
 #' @export
+#' @rdname HiveS2Connection-class
 setMethod("dbConnect", "jdbcHiveDriver",
           function(
             drv,
@@ -32,14 +37,3 @@ setMethod("dbConnect", "jdbcHiveDriver",
                 schema_name = schema,
                 username = as.character(user))},
           valueClass="HiveS2Connection")
-
-#' .verify.JDBC.result copied from RJDBC
-.verify.JDBC.result <- function (result, ...) {
-  if (is.jnull(result)) {
-    x <- .jgetEx(TRUE)
-    if (is.jnull(x))
-      stop(...)
-    else
-      stop(...," (",.jcall(x, "S", "getMessage"),")")
-  }
-}
