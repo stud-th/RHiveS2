@@ -14,3 +14,14 @@
   if (nchar(quote)) s <- gsub(paste("\\",quote,sep=''),paste("\\\\\\",quote,sep=''),s,perl=TRUE)
   paste(quote,s,quote,sep='')
 }
+
+#' .verify.JDBC.result copied from RJDBC
+.verify.JDBC.result <- function (result, ...) {
+  if (is.jnull(result)) {
+    x <- .jgetEx(TRUE)
+    if (is.jnull(x))
+      stop(...)
+    else
+      stop(...," (",.jcall(x, "S", "getMessage"),")")
+  }
+}
