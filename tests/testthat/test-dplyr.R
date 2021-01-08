@@ -13,8 +13,6 @@ test_that("copy_to overwrites hive table if set to true", {
   succeed()
 })
 
-iris_tbl <- copy_to(conn, iris, "iris",  overwrite = TRUE )
-
 test_that("the implementation of 'mutate' functions as expected", {
 
   expect_equivalent(
