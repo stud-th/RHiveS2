@@ -100,15 +100,6 @@ test_that("summarise generates group_by and select", {
   expect_equal(out$select, sql('`g`', 'COUNT(*) AS `n`'))
 })
 
-# test_that("summarise peels off a single layer of grouping", {
-#   mf1 <- copy_to(conn, tibble::tibble(x = 1, y = 1, z = 2) %>% group_by(x, y), "df3", overwrite = TRUE )
-#   mf2 <- mf1 %>% summarise(n = n())
-#   expect_equal(group_vars(mf2), "x")
-#
-#   mf3 <- mf2 %>% summarise(n = n())
-#   expect_equal(group_vars(mf3), character())
-# })
-
 test_that("summarise performs partial evaluation", {
   mf1 <- copy_to(conn, tibble::tibble(x = 1), "df3", overwrite = TRUE )
 
@@ -118,135 +109,27 @@ test_that("summarise performs partial evaluation", {
   expect_equal(mf2$y, "true")
 })
 
-# test_that("grepl works as expected", {
-#
-#   regexes <- c(
-#     "a|c", ".", "b", "x|z", "", "y", "e", "^", "$", "^$", "[0-9]", "[a-z]", "[b-z]"
-#   )
-#   verify_equivalent <- function(actual, expected) {
-#     # handle an edge case for arrow-enabled Spark connection
-#     for (col in colnames(df2)) {
-#       expect_equivalent(
-#         as.character(actual[[col]]),
-#         as.character(expected[[col]])
-#       )
-#     }
-#   }
-#   for (regex in regexes) {
-#     verify_equivalent(
-#       df2 %>% dplyr::filter(grepl(regex, b)),
-#       df2_tbl %>% dplyr::filter(grepl(regex, b)) %>% collect()
-#     )
-#     verify_equivalent(
-#       df2 %>% dplyr::filter(grepl(regex, c)),
-#       df2_tbl %>% dplyr::filter(grepl(regex, c)) %>% collect()
-#     )
-#   }
-# })
-#
-# test_that("rowSums works as expected", {
-#   df <- do.call(
-#     tibble::tibble,
-#     lapply(
-#       seq(6L),
-#       function(x) {
-#         column <- list(runif(100))
-#         names(column) <- paste0("col", x)
-#         column
-#       }
-#     ) %>%
-#       unlist(recursive = FALSE)
-#   ) %>%
-#     dplyr::mutate(na = NA_real_)
-#   sdf <- copy_to(sc, df, overwrite = TRUE)
-#   expect_row_sums_eq <- function(x, na.rm) {
-#     expected <- df %>% dplyr::mutate(row_sum = rowSums(.[x], na.rm = na.rm))
-#
-#     expect_equivalent(
-#       expected,
-#       sdf %>%
-#         dplyr::mutate(row_sum = rowSums(.[x], na.rm = na.rm)) %>%
-#         collect()
-#     )
-#     expect_equivalent(
-#       expected,
-#       sdf %>%
-#         dplyr::mutate(row_sum = rowSums(sdf[x], na.rm = na.rm)) %>%
-#         collect()
-#     )
-#   }
-#   test_cases <- list(
-#     4L, 2:4, 4:2, -3L, -2:-4, c(2L, 4L),
-#     "col5", c("col1", "col3", "col6"),
-#     "na", c("col1", "na"), c("col1", "na", "col3", "col6"),
-#     NULL
-#   )
-#
-#   for (x in test_cases) {
-#     for (na.rm in c(FALSE, TRUE)) {
-#       expect_row_sums_eq(x, na.rm = na.rm)
-#     }
-#   }
-# })
-#
-# test_that("weighted.mean works as expected", {
-#   df <- tibble::tibble(
-#     x = c(NA_real_, 3.1, 2.2, NA_real_, 3.3, 4),
-#     w = c(NA_real_, 1, 0.5, 1, 0.75, NA_real_)
-#   )
-#   sdf <- copy_to(sc, df, overwrite = TRUE)
-#
-#   expect_equal(
-#     sdf %>% dplyr::summarize(wm = weighted.mean(x, w)) %>% dplyr::pull(wm),
-#     df %>%
-#       dplyr::summarize(
-#         wm = sum(w * x, na.rm = TRUE) /
-#           sum(w * as.numeric(!is.na(x)), na.rm = TRUE)
-#       ) %>%
-#       dplyr::pull(wm)
-#   )
-#
-#   df <- tibble::tibble(
-#     x = rep(c(NA_real_, 3.1, 2.2, NA_real_, 3.3, 4), 3L),
-#     w = rep(c(NA_real_, 1, 0.5, 1, 0.75, NA_real_), 3L),
-#     grp = c(rep(1L, 6L), rep(2L, 6L), rep(3L, 6L))
-#   )
-#   sdf <- copy_to(sc, df, overwrite = TRUE)
-#
-#   expect_equal(
-#     sdf %>% dplyr::summarize(wm = weighted.mean(x, w)) %>% dplyr::pull(wm),
-#     df %>%
-#       dplyr::summarize(
-#         wm = sum(w * x, na.rm = TRUE) /
-#           sum(w * as.numeric(!is.na(x)), na.rm = TRUE)
-#       ) %>%
-#       dplyr::pull(wm)
-#   )
-#   expect_equal(
-#     sdf %>% dplyr::summarize(wm = weighted.mean(x ^ 3, w ^ 2)) %>% dplyr::pull(wm),
-#     df %>%
-#       dplyr::summarize(
-#         wm = sum(w ^ 2 * x ^ 3, na.rm = TRUE) /
-#           sum(w ^ 2 * as.numeric(!is.na(x)), na.rm = TRUE)
-#       ) %>%
-#       dplyr::pull(wm)
-#   )
-# })
-# test_that("'left_join' does not use 'using' clause", {
-#   expect_equal(
-#     spark_version(sc) >= "2.0.0" && packageVersion("dplyr") < "0.5.0.90",
-#     grepl(
-#       "USING",
-#       dbplyr::sql_render(left_join(df1_tbl, df2_tbl))
-#     )
-#   )
-# })
-#
-# test_that("the implementation of 'left_join' functions as expected", {
-#
-#   expect_equivalent(
-#     left_join(df1, df2) %>% dplyr::arrange(b),
-#     left_join(df1_tbl, df2_tbl) %>% dplyr::arrange(b) %>% collect()
-#   )
-# })
+df1_df <- tibble(a = letters[20:22], b = letters[1:3])
+df2_df <- tibble(b = letters[1:3], c = letters[24:26])
+df1 <- copy_to(conn, df1_df, "df1",  overwrite = TRUE )
+df2 <- copy_to(conn, df2_df, "df2",  overwrite = TRUE )
+
+test_that("join has compliable syntax", {
+
+  expect_equivalent(
+    left_join(df2_df, df1_df) %>% dplyr::arrange(b),
+    left_join(df2, df1) %>% dplyr::arrange(b) %>% collect()
+  )
+})
+#test adopted from sparlyr/testthat
+test_that("'left_join' does not use 'using' clause", {
+  expect(
+    TRUE,
+    grepl(
+      "USING",
+      dbplyr::sql_render(left_join(df1, df2))
+    )
+  )
+})
+
 
