@@ -1,6 +1,6 @@
 #' @import methods
 #' @import RJDBC
-#' @include jdbcHiveDriver.R helper-RJDBC.R
+#' @include jdbcHiveDriver.R helper-extr-pcgs.R
 #'
 #'
 #' dbConnect function adapted from RJDBC creating and setting parameters for HiveS2Connection

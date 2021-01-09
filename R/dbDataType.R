@@ -18,8 +18,6 @@ data_type <- function(dbObj,x) {
     POSIXt ="TIMESTAMP",
     Date = "DATE",
     NULL = "varchar",
-    # #TODO: map and array needs further implementation
-    #list = list_to_map_array,
     stop("Unsupported type: ", typeof(x), call. = FALSE)
 # unsupported conversion to Hive Complex Types
 # ARRAY<data_type>,  MAP<primitive_type, data_type>, STRUCT...

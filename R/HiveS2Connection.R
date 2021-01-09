@@ -1,4 +1,4 @@
-#' @include helper-RJDBC.R
+#' @include helper-extr-pcgs.R
 #' HiveS2Connection class connection class.
 #' inherits from JDBCConnection (RJDBC)
 #' @import rJava  dplyr DBI
@@ -15,7 +15,7 @@ setClass("HiveS2Connection",
          ))
 
 #' function HiveS2 copied from RJDBC
-#' create jdbcHiveDriver dbObj
+#' creates jdbcHiveDriver dbObj
 #' @export
 #' @rdname HiveS2Connection-class
 HiveS2 <- function(driverClass='', classPath='', identifier.quote="`") {
@@ -90,7 +90,7 @@ setMethod("dbDisconnect", "HiveS2Connection", function(conn, ...){
 #' @param overwrite allows to specify weather existing table with the same name should be removed
 #' @export
 #' @rdname HiveS2Connection-class
-setMethod("dbWriteTable", "HiveS2Connection", def=function(conn, name, value, overwrite=FALSE, append=FALSE, force=FALSE, ...) {
+setMethod("dbWriteTable", "HiveS2Connection", def=function(conn, name, value, overwrite=FALSE, append=FALSE, force=FALSE,...) {
 # getAutoCommit deleated as it's not supported
   overwrite <- isTRUE(as.logical(overwrite))
   append <- isTRUE(as.logical(append))

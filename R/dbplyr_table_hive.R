@@ -1,31 +1,31 @@
+#' @include helper-extr-pcgs.R
+#' @importFrom dbplyr build_sql as.sql
+#'
 #' @export
 db_save_query.HiveS2Connection <- function(con, sql, name, temporary = TRUE, ...) {
-  sql <- sql_query_save(con, sql, name, temporary = temporary, ...)
+  sql <-   build_sql(
+    #saves result in temporoary view as temporary table is not supported
+    "CREATE ", if (temporary) sql("TEMPORARY "), "VIEW \n",
+    as.sql(name), " AS ", sql,
+    con = con
+  )
   dbSendQuery(con, sql)
   name
 }
 
-sql_query_save<- function(con, sql, name, temporary = TRUE, ...) {
-  dbplyr::build_sql(
-    "CREATE ", if (temporary) sql("TEMPORARY "), "VIEW \n",
-    dbplyr::as.sql(name), " AS ", sql,
-    con = con
-  )
-}
-
 #' @export
 db_analyze.HiveS2Connection <- function(con, table, ...) {
-  info <- dbGetQuery(con, dbplyr::build_sql("SHOW TABLES LIKE ", dbQuoteString(con, table), con = con))
+  info <- dbGetQuery(con, build_sql("SHOW TABLES LIKE ", dbQuoteString(con, table), con = con))
   if (nrow(info) > 0 && identical(info$isTemporary, FALSE)) {
-    sql<- dbplyr::build_sql("ANALYZE TABLE", dbplyr::as.sql(table), "COMPUTE STATISTICS", con = con)
+    sql<- build_sql("ANALYZE TABLE", as.sql(table), "COMPUTE STATISTICS", con = con)
     dbExecute(con, sql)
   }
 }
 
 #' @export
 db_drop_table.HiveS2Connection <- function(con, table, ...) {
-  sql <- dbplyr::build_sql(
-    "DROP TABLE ", sql("IF EXISTS "), dbplyr::as.sql(table),
+  sql <- build_sql(
+    "DROP TABLE ", sql("IF EXISTS "), as.sql(table),
     con = con
   )
   dbSendQuery(con, sql)
@@ -53,9 +53,13 @@ sql_translate_env.HiveS2Connection <- function(con) {
     sql_translator(.parent = base_agg,
                    n  = function() sql("COUNT(*)"), # issue in dbplyr 1.4.4  #343
                    var = sql_aggregate("VARIANCE", "var"),
+                   quantile = sql_quantile("PERCENTILE"),
+                   median = sql_median("PERCENTILE")
     ),
     sql_translator(.parent = base_win,
                    var = win_aggregate("VARIANCE"),
+                   quantile = sql_quantile("PERCENTILE", window = TRUE),
+                   median = sql_median("PERCENTILE", window = TRUE)
     )
   )
 }
