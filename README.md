@@ -23,7 +23,7 @@ df <- dplyr::tbl(conn, "foo")
 ```
 ## Notice
 
-Some functionalities may not be supported when using the newest release of dbplyr, version >2.0.0  is recommended
+Some functionalities may not be supported when using the newest release of dbplyr, version < 2.0.0  is recommended
 
 To downgrade package version use:
 ``` r
