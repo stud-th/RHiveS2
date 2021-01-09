@@ -21,10 +21,10 @@ Imports:
     dplyr,
     dbplyr
 Collate: 
-    'jdbcHiveDriver.R'
-    'HS2Connector.R'
+    'helper-extr-pcgs.R'
     'HiveS2Connection.R'
-    'HiveS2Result.R'
+    'jdbcHiveDriver.R'
+    'HiveS2Connector.R'
     'dbDataType.R'
     'dbListTables.R'
     'dbi_transactions.R'
