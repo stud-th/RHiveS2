@@ -18,6 +18,14 @@ setMethod("dbConnect", "jdbcHiveDriver",
             ...
           )
           {
+            #check dbplyr version
+            dbplyr_version <- try(as.character(utils::packageVersion('dbplyr')))
+            if (inherits(dbplyr_version, 'try-error')) {
+              warning('dbplyr not available')
+            } else if (utils::compareVersion(dbplyr_version, '1.4.4') < 0) {
+              warning(paste('recommended dbplyr version is =< 1.4.4. Using version ', as.character(utils::packageVersion('dbplyr')), "may couse unexpected errors."))
+            }
+
             jc <- .jcall("java/sql/DriverManager","Ljava/sql/Connection;","getConnection", as.character(paste(host,port,"/",schema,sep = ""))[1], as.character(user)[1], as.character(password)[1], check=FALSE)
             if (is.jnull(jc) && !is.jnull(drv@jdrv)) {
               oex <- .jgetEx(TRUE)
