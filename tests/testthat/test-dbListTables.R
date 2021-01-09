@@ -2,10 +2,6 @@ source('utilities.R')
 
 conn <- HiveS2_TestConnection()
 
-test_that('dbListTables returns character(0) when empty database', {
-  expect_equal(length(dbListTables(conn)), 1)
-})
-
 dbSendQuery(conn, "create table foo (test int)")
 test_that('dbListTables returns character(0) when no match found', {
   expect_equal(
@@ -19,11 +15,20 @@ test_that('dbListTables returns list of tables when  match found', {
     "foo"
   )
 })
-dbSendQuery(conn, "drop table foo")
 
 test_that('dbListTables returns list of tables', {
-  expect_warning(x<-length(dbListTables(conn, schema = "so_survey_2019_hive")))
+  x<-length(dbListTables(conn))
   expect_gt(x, 0)
 })
+
+dbRemoveTable(conn, "foo")
+
+test_that('dbListTables returns character(0) when empty database', {
+
+  expect_warning(n<-length(dbListTables(conn, schema = "empty_database")))
+  expect_equal(n, 0)
+
+})
+
 
 dbDisconnect(conn)

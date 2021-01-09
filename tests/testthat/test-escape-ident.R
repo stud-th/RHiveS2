@@ -1,3 +1,5 @@
+#testing if escapeing and quoting complies with dbplyr
+#iported from  tidyverse/dbplyr/tests/testthat/test-escape.R
 # Identifiers ------------------------------------------------------------------
 source('utilities.R')
 
