@@ -11,11 +11,12 @@ devtools::install_github("stud-th/RHiveS2")
 # Loading JDBC HiveDriver and connection:
 cp=c("hive-jdbc-<version>-standalone.jar","hadoop-common-<version>.jar","commons-configuration-<version>.jar")
 .jinit(classpath=cp)
-conn <- dbConnect( HiveS2("org.apache.hive.jdbc.HiveDriver","hive-jdbc-<version>.jar",identifier.quote="`"),                          host ="jdbc:hive2://<HS2 host>:",
+conn <- dbConnect( HiveS2("org.apache.hive.jdbc.HiveDriver","hive-jdbc-<version>.jar",identifier.quote="`"),                          
+                       host ="jdbc:hive2://<HS2 host>:",
                        port = "<HS2 port>",
                        schema = "<database>", 
                        user = "<user>", 
-                      password = "<password>")
+                       password = "<password>")
 
 
 dbListTables(conn)
