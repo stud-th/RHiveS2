@@ -1,8 +1,8 @@
 #' @include helper-extr-pcgs.R
 #' HiveS2Connection class connection class.
 #' inherits from JDBCConnection (RJDBC)
-#' @import rJava  dplyr DBI
-#'
+#' @import rJava  dplyr
+#' @import RJDBC DBI
 #' @export
 #' @keywords internal
 setClass("HiveS2Connection",
@@ -11,7 +11,8 @@ setClass("HiveS2Connection",
            host = "character",
            port = "character",
            schema_name = "character",
-           username = "character"
+           username = "character",
+           password = "character"
          ))
 
 #' function HiveS2 copied from RJDBC

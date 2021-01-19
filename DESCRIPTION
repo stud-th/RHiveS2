@@ -25,6 +25,7 @@ Collate:
     'HiveS2Connection.R'
     'jdbcHiveDriver.R'
     'HiveS2Connector.R'
+    'HiveS2Result.R'
     'dbDataType.R'
     'dbListTables.R'
     'dbi_transactions.R'
