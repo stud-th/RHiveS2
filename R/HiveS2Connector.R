@@ -1,13 +1,13 @@
 #' @import methods
 #' @import RJDBC
-#' @include jdbcHiveDriver.R helper-extr-pcgs.R
+#' @include HiveS2Driver.R helper-extr-pcgs.R
 #'
 #'
 #' dbConnect function adapted from RJDBC creating and setting parameters for HiveS2Connection
-#' @param drv jdbcHiveDriver object
+#' @param drv HiveS2Driver object
 #' @export
 #' @rdname HiveS2Connection-class
-setMethod("dbConnect", "jdbcHiveDriver",
+setMethod("dbConnect", "HiveS2Driver",
           function(
             drv,
             host,

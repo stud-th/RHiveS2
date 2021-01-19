@@ -23,7 +23,7 @@ Imports:
 Collate: 
     'helper-extr-pcgs.R'
     'HiveS2Connection.R'
-    'jdbcHiveDriver.R'
+    'HiveS2Driver.R'
     'HiveS2Connector.R'
     'HiveS2Result.R'
     'dbDataType.R'

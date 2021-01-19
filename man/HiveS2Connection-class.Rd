@@ -9,10 +9,10 @@
 \alias{show,HiveS2Connection-method}
 \alias{dbDisconnect,HiveS2Connection-method}
 \alias{dbWriteTable,HiveS2Connection,ANY-method}
-\alias{dbConnect,jdbcHiveDriver-method}
+\alias{dbConnect,HiveS2Driver-method}
 \alias{dbListTables,HiveS2Connection-method}
 \title{function HiveS2 copied from RJDBC
-creates jdbcHiveDriver dbObj}
+creates HiveS2Driver dbObj}
 \usage{
 HiveS2(driverClass = "", classPath = "", identifier.quote = "`")
 
@@ -36,14 +36,14 @@ HiveS2(driverClass = "", classPath = "", identifier.quote = "`")
   ...
 )
 
-\S4method{dbConnect}{jdbcHiveDriver}(drv, host, port, schema = NULL, user = "", password = "", ...)
+\S4method{dbConnect}{HiveS2Driver}(drv, host, port, schema = NULL, user = "", password = "", ...)
 
 \S4method{dbListTables}{HiveS2Connection}(conn, pattern = NULL, schema = NULL, ...)
 }
 \arguments{
 \item{overwrite}{allows to specify weather existing table with the same name should be removed}
 
-\item{drv}{jdbcHiveDriver object}
+\item{drv}{HiveS2Driver object}
 
 \item{schema}{- database which tables will be listed from}
 
@@ -51,7 +51,7 @@ HiveS2(driverClass = "", classPath = "", identifier.quote = "`")
 }
 \description{
 function HiveS2 copied from RJDBC
-creates jdbcHiveDriver dbObj
+creates HiveS2Driver dbObj
 
 dbWriteTable writtes table into local temporary dile and than it is laded into Hive with 'LOAD DATA' statment
 Sceleton of the fuction adapted from RJDBC packade

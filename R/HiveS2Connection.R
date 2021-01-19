@@ -16,7 +16,7 @@ setClass("HiveS2Connection",
          ))
 
 #' function HiveS2 copied from RJDBC
-#' creates jdbcHiveDriver dbObj
+#' creates HiveS2Driver dbObj
 #' @export
 #' @rdname HiveS2Connection-class
 HiveS2 <- function(driverClass='', classPath='', identifier.quote="`") {
@@ -28,7 +28,7 @@ HiveS2 <- function(driverClass='', classPath='', identifier.quote="`") {
   jdrv <- .jnew(driverClass, check=FALSE)
   .jcheck(TRUE)
   if (is.jnull(jdrv)) jdrv <- .jnull()
-  new("jdbcHiveDriver", identifier.quote=as.character(identifier.quote), jdrv=jdrv)
+  new("HiveS2Driver", identifier.quote=as.character(identifier.quote), jdrv=jdrv)
 }
 
 

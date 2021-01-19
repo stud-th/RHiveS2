@@ -2,24 +2,24 @@
 #' @import methods
 #' @import RJDBC
 #' @keywords internal
-#' jdbcHiveDriver driver class.
+#' HiveS2Driver driver class.
 #' @export
-setClass("jdbcHiveDriver",
+setClass("HiveS2Driver",
          contains = "DBIDriver",
          slots = c(identifier.quote="character",
                    jdrv="jobjRef"))
 #' @export
-setMethod("dbUnloadDriver", "jdbcHiveDriver", function(drv, ...) {
+setMethod("dbUnloadDriver", "HiveS2Driver", function(drv, ...) {
   FALSE
 })
 
 
 
-#' jdbcHiveDriver info
+#' HiveS2Driver info
 #' @export
-setMethod("dbGetInfo", "jdbcHiveDriver", function(dbObj, ...) {
+setMethod("dbGetInfo", "HiveS2Driver", function(dbObj, ...) {
   list(
-    name = "jdbcHiveDriver",
+    name = "HiveS2Driver",
     driver.version = dbObj@jdrv@jclass,
     identifier.quote = dbObj@identifier.quote
   )
