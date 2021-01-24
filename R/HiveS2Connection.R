@@ -33,6 +33,7 @@ HiveS2 <- function(driverClass='', classPath='', identifier.quote="`") {
 
 
 #' @export
+#' @import DBI
 #' @rdname HiveS2Connection-class
 setMethod("dbQuoteIdentifier", c("HiveS2Connection", "character"), function(conn, x, ...) {
   if (any(is.na(x))) {
@@ -48,6 +49,7 @@ setMethod("dbQuoteIdentifier", c("HiveS2Connection", "character"), function(conn
 
 
 #' @export
+#' @import DBI
 #' @rdname HiveS2Connection-class
 setMethod("dbQuoteIdentifier", signature("HiveS2Connection", "SQL"), function(conn, x, ...) {
   x
