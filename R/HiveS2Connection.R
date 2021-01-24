@@ -131,7 +131,6 @@ setMethod("dbWriteTable", "HiveS2Connection", def=function(conn, name, value, ov
   fn <- normalizePath(tempfile("rsdbi", tmpdir = "/Docker/csv-data"), winslash = "/", mustWork = FALSE)
   #fwrite used as it is  but much faster that write.csv so more suitable for Big Data
   data.table::fwrite(value, file = fn, sep=";", col.names=FALSE, row.names=FALSE)
-  browser()
   on.exit(unlink(fn), add = TRUE)
   fn_docker <- paste0("/files/csv-data/",basename(fn))
   fn<-fn_docker
